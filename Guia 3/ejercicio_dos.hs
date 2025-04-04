@@ -32,10 +32,28 @@ ambosSonCeroGuards n m
 
 ambosSonCeroPattern :: Int -> Int -> String
 ambosSonCeroPattern 0 0 = "Ambos son cero"
-ambosSonCeroPattern n m = "Uno de los dos no es cero! Putoooooo!!!!!"
+ambosSonCeroPattern n m = "Uno de los dos no es cero"
 
 enMismoIntervalo :: Float -> String
 enMismoIntervalo n
     | n <= 3 = "Entre menos infinito y tres, incluido."
     | n <= 7 = "Entre tres y siete, incluido."
     | otherwise = "Entre siete y mas infinito"
+
+sumaDistintos :: Int -> Int -> Int -> Int
+sumaDistintos x y z
+    | x == y = x +z
+    | x == z = x + y
+    | otherwise = x + y
+
+esMultiploDe :: Int -> Int -> String
+esMultiploDe n m 
+    |mod m n == 0 = "El primero es multiplo del segundo"
+    | otherwise = "El primero no es multiplo del segundo"
+
+digitoUnidades :: Int -> Int
+digitoUnidades n = mod (absoluto n) 10
+
+digitoDecenas :: Int -> Int
+digitoDecenas n = mod ( div (absoluto n) 10) 10
+
