@@ -22,5 +22,24 @@ contarPalabras (x:y:xs)
 
 palabras :: [Char] -> [[Char]]
 palabras [] = []
-palabras (x:xs)
-    | x /= ' ' = x : 
+palabras xs = primera xs : palabras (resto xs)
+
+primera :: [Char] -> [Char]
+primera [] = []
+primera (x:xs)
+    | x == ' '  = []
+    | otherwise = x : primera xs
+
+resto :: [Char] -> [Char]
+resto [] = []
+resto (x:xs)
+    | x == ' '  = sinEspacios xs
+    | otherwise = resto xs
+
+sinEspacios :: [Char] -> [Char]
+sinEspacios [] = []
+sinEspacios (x:xs)
+    | x == ' '  = sinEspacios xs
+    | otherwise = x:xs
+
+--
