@@ -63,3 +63,16 @@ largoPalabra (x:xs) = 1 + largoPalabra xs
 primera2 :: [[Char]] -> [Char]
 primera2 [] = []
 primera2 (x:xs) = x
+
+-- V
+type Text = [Char]
+aplanar :: [Text] -> Text
+aplanar [] = []
+aplanar (x:xs) = sacarEspaciosAux x ++ aplanar xs
+
+sacarEspaciosAux :: Text -> Text
+sacarEspaciosAux [] = []
+sacarEspaciosAux (x:xs)
+    | x == ' ' = sacarEspaciosAux xs
+    | otherwise = x : sacarEspaciosAux xs
+
