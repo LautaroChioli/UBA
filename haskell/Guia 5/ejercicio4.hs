@@ -42,4 +42,24 @@ sinEspacios (x:xs)
     | x == ' '  = sinEspacios xs
     | otherwise = x:xs
 
---
+--IV
+
+palabraMasLarga :: [Char] -> [Char]
+palabraMasLarga [x] = [x]
+palabraMasLarga xs = compararPalabras (primera2 (palabras xs)) (palabras xs)
+
+compararPalabras :: [Char] -> [[Char]] -> [Char]
+compararPalabras [] [] = []
+compararPalabras t [] = t
+compararPalabras [] (x:xs) = compararPalabras x xs
+compararPalabras t (x:xs) 
+    | largoPalabra t >= largoPalabra x = compararPalabras t xs
+    | otherwise = compararPalabras x xs
+
+largoPalabra :: [Char] -> Int
+largoPalabra [] = 0
+largoPalabra (x:xs) = 1 + largoPalabra xs
+    
+primera2 :: [[Char]] -> [Char]
+primera2 [] = []
+primera2 (x:xs) = x
