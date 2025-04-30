@@ -8,7 +8,7 @@ sumaAcumuladaAux _ [] = []
 sumaAcumuladaAux n (y:ys) = (n + y) : sumaAcumuladaAux (n + y) ys
 
 
--- II AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA IHGUY ASDDSASDA DAS SD SD SD SD SD XCZ ZX CZCX ZXC CZX
+-- Ejercicio 2
 
 descomponerEnPrimos :: [Int] -> [[Int]]
 descomponerEnPrimos [] = []
@@ -26,7 +26,7 @@ sumatoria (x:xs) = x + sumatoria xs
 
 verEsPrimo :: Int -> Bool
 verEsPrimo 0 = False
-verEsPrimo 1 = True
+verEsPrimo 1 = False
 verEsPrimo n
     | sumatoria (divisoresTodos n [1..n]) == n + 1 = True
     | otherwise = False
@@ -37,3 +37,4 @@ divisoresTodos 0 _  = []
 divisoresTodos n (x:xs)
     | mod n x == 0 = x : divisoresTodos n xs
     | otherwise = divisoresTodos n xs
+    
