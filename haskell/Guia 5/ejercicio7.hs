@@ -43,7 +43,11 @@ disponibilidadLocker (disp, _) = disp
 
 -- Ejercicio IV
 
--- ocuparLocker :: Identificacion -> MapaDeLockers -> MapaDeLockers
+ocuparLocker :: Identificacion -> MapaDeLockers -> MapaDeLockers
+ocuparLocker _ [] = []
+ocuparLocker iden (locker:lockers)
+    | idenDeLocker locker == iden = cambiarOcupacionLocker locker : ocuparLocker iden lockers
+    | otherwise = locker : ocuparLocker iden lockers
 
 
 sacarLocker :: Identificacion -> MapaDeLockers -> MapaDeLockers
@@ -51,5 +55,5 @@ sacarLocker iden (locker:lockers)
     | existeElLocker iden (locker:lockers) && idenDeLocker locker == iden = lockers
     | otherwise = locker : sacarLocker iden lockers
 
--- ocuparLocker :: Identificacion -> MapaDeLockers -> Locker 
--- ocuparLocker 
+cambiarOcupacionLocker :: Locker -> Locker
+cambiarOcupacionLocker (iden , (ocupacion, ubicacion)) = (iden, (False, ubicacion))
