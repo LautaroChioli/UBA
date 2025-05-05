@@ -1,4 +1,4 @@
-import Text.Read (Lexeme(String))
+
 type Presidente = String
 type Vice = String
 type Formula = (Presidente, Vice)
@@ -75,4 +75,40 @@ buscoRepetidoAux _ [] = False
 buscoRepetidoAux persona (x:xs)
     | persona == x = True
     | otherwise = buscoRepetidoAux persona xs
+
+-- Ejercicio 3
+{--
+problema porcentajeDeVotos (vice: String, formulas: seq⟨String x String⟩,votos:seq< Z >) : R {
+ requiere: {La segunda componente de algún elemento de formulas es vice}
+ requiere: {¬formulasInvalidas(formulas)}
+ requiere: {|formulas| = |votos|}
+ requiere: {Todos los elementos de votos son mayores o iguales a 0}
+ requiere: {Hay al menos un elemento de votos mayores estricto a 0}
+ asegura: {res es el porcentaje de votos que obtuvo vice sobre el total de votos afirmativos}
+}
+Para resolver este ejercicio pueden utilizar la función division presentada en el Ejercicio 1.
+[("Juan","Pedro"),("Matias","Javier"),("Gonzalo","Victor")]   [100,50,25]
+--}
+
+porcentajeDeVotos :: Vice -> Formulas -> Votos -> Float
+porcentajeDeVotos _ [] _ = 0
+porcentajeDeVotos _ _ [] = 0
+porcentajeDeVotos  vice formulas votos = (fromIntegral (buscoVotosDeVice vice (votosPorFormula formulas votos)) / fromIntegral (sumatoria votos)) * 100
+
+
+votosPorFormula :: Formulas -> Votos -> [((Presidente, Vice), Int)]
+votosPorFormula [] [] = []
+votosPorFormula (tupla:resto) (votosParaTuplaActual:restoVotos) = (tupla, votosParaTuplaActual) : votosPorFormula resto restoVotos
+
+buscoVotosDeVice :: Vice -> [((Presidente, Vice), Int)] -> Int
+buscoVotosDeVice _ [] = 0
+buscoVotosDeVice vice (tupla:resto)
+    | vice == buscoVice tupla = votosVice tupla
+    | otherwise = buscoVotosDeVice vice resto
+
+buscoVice :: ((Presidente, Vice), Int) -> Vice
+buscoVice ((a, b), n) = b
+
+votosVice :: ((Presidente, Vice), Int) -> Int
+votosVice ((a, b), n) = n
 
