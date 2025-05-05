@@ -3,7 +3,7 @@ module SolucionT2 where
 
 {--
  Ejercicio 1 (2 puntos)
-
+rSXWVCYS.
 problema hayQueCodificar (c: Char, mapeo: seq⟨Char x Char⟩ ) : Bool {
   requiere: {No hay elementos repetidos entre las primeras componentes de mapeo}
   requiere: {No hay elementos repetidos entre las segundas componentes de mapeo}
