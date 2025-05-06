@@ -1,0 +1,463 @@
+<h1>Parcial - tema2</h1>
+<p>Nota: 9.6 / 10.0 (APROBADO)</p>
+<pre><code>puntaje ej1: 2
+puntaje ej2: 2
+puntaje ej3: 2
+puntaje ej4: 2.62
+puntaje ej5: 1
+</code></pre>
+<h2>Datos del alumno</h2>
+<p>Nombre: Lautaro Martin Chioli</p>
+<p>DNI: 46740345</p>
+<p>LU: </p>
+<p>Maquina: 15-03</p>
+<h2>Enunciado</h2>
+<html>
+
+<head>
+  <link rel="icon" href="data:,">
+  <link href="css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+
+<div>
+
+<h1> Parcial Haskell - Tema 2 </h1>
+
+<p>
+
+<h2> Importante </h2>
+Template de funciones a implementar <a href="#" onclick="forceDownload('/parcial/Template_t2.hs','SolucionT2.hs');">aca</a><br>
+Lista de funciones permitidas <a href="/static/haskell_permitidas.html">aca</a><br>
+Ejemplo de hunit <a href="#" onclick="forceDownload('/parcial/Tests_template_t2.hs','Template_Tests_t2.hs');">aca</a>
+
+<p>
+
+<form name="form1" action="/submit_examen" method="post" enctype="multipart/form-data" onsubmit="return validaciones(event)">
+
+  <h2> Enunciado </h2>
+
+  <ol>
+   <p>
+    La codificación por sustitución es una de las técnicas de cifrado más simples,
+    en el que un caracter en el texto original es reemplazado por otro caracter dependiendo de un mapeo. Este mapeo puede representarse con una secuencia de tuplas de dos caracteres, donde la primera
+    componente de la tupla representa el caracter original y la segunda componente el caracter por el cual se lo va a sustituir.
+
+    Por simplicidad, en este problema codificaremos solo los caracteres que aparecen en el mapeo dado. Todos los restantes caracteres
+    quedan inalterados en el mensaje codificado.
+
+  </p>
+  <p>
+    Para implementar este sistema de codificación nos enviaron las siguientes especificaciones y nos pidieron que hagamos el desarrollo enteramente en Haskell, utilizando los tipos
+    requeridos y solamente las funciones que se ven en la materia Introducción a la Programación / Algoritmos y Estructuras de Datos I (FCEyN-UBA).
+  </p>
+    <li> Ejercicio 1 (2 puntos)</li>
+    <p>problema hayQueCodificar (<i>c</i>: Char, <i>mapeo</i>: seq⟨Char x Char⟩ ) : Bool {<br>
+      &nbsp; <strong>requiere:</strong> {No hay elementos repetidos entre las primeras componentes de <i>mapeo</i>} <br>
+      &nbsp; <strong>requiere:</strong> {No hay elementos repetidos entre las segundas componentes de <i>mapeo</i>} <br>
+      &nbsp; <strong>asegura:</strong> {<i>res</i> = true <=> <i>c</i> es igual a la primera componente de alguna tupla de <i>mapeo</i>} <br>
+    }<br>
+    </p>
+
+    <li> Ejercicio 2 (2 puntos)</li>
+    <p>problema cuantasVecesHayQueCodificar (<i>c</i>: Char, <i>frase</i>: seq⟨Char⟩, <i>mapeo</i>: seq⟨Char x Char⟩ ) : Z {<br>
+      &nbsp; <strong>requiere:</strong> {No hay elementos repetidos entre las primeras componentes de <i>mapeo</i>} <br>
+      &nbsp; <strong>requiere:</strong> {No hay elementos repetidos entre las segundas componentes de <i>mapeo</i>} <br>
+      &nbsp; <strong>requiere:</strong> {|<i>frase</i>| > 0 } <br>
+      &nbsp; <strong>requiere:</strong> {<i>c</i> pertenece a <i>frase</i>} <br>
+      &nbsp; <strong>asegura:</strong> {(<i>res</i> = 0 y hayQueCodificar (<i>c</i>, <i>mapeo</i>) = false) o
+        (<i>res</i> = cantidad de veces que <i>c</i> aparece en <i>frase</i> y hayQueCodificar (<i>c</i>, <i>mapeo</i>) = true)} <br>
+    }<br>
+    </p>
+
+    <li> Ejercicio 3 (2 puntos)</li>
+    <p>
+    problema laQueMasHayQueCodificar (<i>frase</i>: seq⟨Char⟩, <i>mapeo</i>: seq⟨Char x Char⟩ ) : Char {<br>
+      &nbsp; <strong>requiere:</strong> {No hay elementos repetidos entre las primeras componentes de <i>mapeo</i>} <br>
+      &nbsp; <strong>requiere:</strong> {No hay elementos repetidos entre las segundas componentes de <i>mapeo</i>} <br>
+      &nbsp; <strong>requiere:</strong> {|<i>frase</i>| > 0 } <br>
+      &nbsp; <strong>requiere:</strong> {Existe al menos un <i>c</i> que pertenece a <i>frase</i> y hayQueCodificar(<i>c</i>, <i>mapeo</i>)=true} <br>
+      &nbsp; <strong>asegura:</strong> {<i>res</i> = <i>c</i> donde <i>c</i> es el caracter tal que cuantasVecesHayQueCodificar(<i>c</i>, <i>frase</i>, <i>mapeo</i>)
+        es mayor a cualquier otro caracter perteneciente a <i>frase</i>}<br>
+        &nbsp; <strong>asegura:</strong> {Si existen más de un caracter <i>c</i> que cumple la condición anterior, devuelve el que aparece primero en <i>frase</i>
+    }<br>
+    </p>
+
+    <li> Ejercicio 4 (3 puntos)</li>
+    <p>problema codificarFrase (<i>frase</i>: seq⟨Char⟩, <i>mapeo</i>: seq⟨Char x Char⟩ ) : seq ⟨Char⟩ {<br>
+      &nbsp; <strong>requiere:</strong> {No hay elementos repetidos entre las primeras componentes de <i>mapeo</i>} <br>
+      &nbsp; <strong>requiere:</strong> {No hay elementos repetidos entre las segundas componentes de <i>mapeo</i>} <br>
+      &nbsp; <strong>requiere:</strong> {|<i>frase</i>| > 0 } <br>
+      &nbsp; <strong>asegura:</strong> {|<i>res</i>| = | <i>frase</i>|} <br>
+      &nbsp; <strong>asegura:</strong> { Para todo 0 <= <i>i</i> < <i>|frase|</i> si hayQueCodificar(<i>frase[i]</i>, <i>mapeo</i>) = true
+        entonces <i>res[i]= (mapeo[j])<sub>1</sub></i>, para un <i>j</i> tal que 0 <= <i>j < |mapeo|</i> y <i>mapeo[j])<sub>0</sub></i>=<i>frase[i]</i>}<br>
+      &nbsp; <strong>asegura:</strong> { Para todo 0 <= <i>i</i> < <i>|frase|</i> si hayQueCodificar(<i>frase[i]</i>, <i>mapeo</i>) = false
+        entonces <i>res[i]= frase[i]</i>}<br>
+    }
+    </p>
+    <li> Ejercicio 5 (1 punto)</li>
+    <p>
+      Conteste marcando la opción correcta. Si un usuario no cumple con la precondición de la especificación de un programa y el
+      programa no termina (se cuelga) : <br>
+
+    <input type="radio" name="mchoice_1" id="opcion1" value="1" />
+        <label for="opcion1">El usuario tiene derecho a quejarse porque el programador debería haber contemplado ese caso.</label> <br>
+    <input type="radio" name="mchoice_1" id="opcion2" value="2" />
+        <label for="opcion2">El usuario no tiene derecho a quejarse, pero el programa es incorrecto porque no debería colgarse.</label> <br>
+    <input type="radio" name="mchoice_1" id="opcion3" value="3" />
+        <label for="opcion3">El usuario no tiene derecho a quejarse y no importa que el programa se cuelgue para este caso.</label> <br>
+    </p>
+    <p></p>
+
+  </ol>
+
+  <hr>
+    <h3 style="color:#1A5276">Adjunta el archivo con tu solución:</h3>
+    <p><b style="color:red">Solo se puede adjuntar 1 archivo de extensión .hs. En caso de haber desarrollado tests propios, no deben ser entregados.</b></p>
+
+    <label for="archivo">Seleccionar archivo a enviar:</label>
+    <input type="file" id="archivo" name="archivo" required accept=".hs,text/x-haskell"/>
+
+    <input type="submit" value="Enviar"
+          style= "background-color: #1A5276; border-radius: 5px;
+                  margin-top:10px;padding: 10px 150px;color: #FFFFFF;
+                  font-size: 20px;cursor: pointer; width:100%" >
+
+  </form>
+
+  </div>
+
+  <script>
+    function validaciones(event) {
+      var confirmacion = confirm("Confirmo que revise mis respuestas y que quiero entregar mi examen");
+      if (!confirmacion) {
+          event.preventDefault();
+          event.returnValue = false;
+          return false;
+        }
+        event.returnValue = true;
+        return true;
+    }
+  </script>
+
+  <script>
+  // registro una funcion para mostrar el archivo cuando se adjunta.
+  // de esa forma evitamos que se adjunten otros archivos por error
+  document
+    .getElementById('archivo')
+    .addEventListener(
+        'change',
+        function () {
+            var fr = new FileReader();
+            fr.onload = function () {
+                alert(this.result);
+            };
+            fr.readAsText(this.files[0]);
+        }
+    );
+
+  // para forzar a bajar el template de hunit y que no se pueda abrir en un nuevo tab
+  // (el browser intenta mostrar el codigo como HTML y el formato se ve raro)
+  function forceDownload(url, filename) {
+    fetch(url).then(function(t) {
+      return t.blob().then((b) => {
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(b);
+        a.setAttribute("download", filename);
+        a.click();
+      });
+    });
+  }
+  </script>
+
+  </body>
+
+  </html>
+
+<h2>Solucion entregada por el alumno</h2>
+<pre><code>module SolucionT2 where
+
+
+{--
+ Ejercicio 1 (2 puntos)
+
+problema hayQueCodificar (c: Char, mapeo: seq⟨Char x Char⟩ ) : Bool {
+  requiere: {No hay elementos repetidos entre las primeras componentes de mapeo}
+  requiere: {No hay elementos repetidos entre las segundas componentes de mapeo}
+  asegura: {res = true &lt;=&gt; c es igual a la primera componente de alguna tupla de mapeo}
+}
+
+[('a','b'),('l','k'),('w','y')]
+--}
+
+hayQueCodificar :: Char -&gt; [(Char,Char)] -&gt; Bool
+hayQueCodificar _ [] = False
+hayQueCodificar letra (tupla:resto)
+    | encuentraLetraACambiar letra tupla = True
+    | otherwise = hayQueCodificar letra resto
+
+-- encuentraLetraACambiarLista :: Char -&gt; [(Char,Char)] -&gt; Bool
+-- encuentraLetraACambiarLista _ [] = False
+-- encuentraLetraACambiarLista letra (tupla:resto)
+--     | encuentraLetraACambiar letra tupla = True
+--     |
+
+encuentraLetraACambiar :: Char -&gt; (Char,Char) -&gt; Bool
+encuentraLetraACambiar letra (a, b)
+    | letra == a = True
+    | otherwise = False
+
+
+
+{--
+ Ejercicio 2 (2 puntos)
+
+problema cuantasVecesHayQueCodificar (c: Char, frase: seq⟨Char⟩, mapeo: seq⟨Char x Char⟩ ) : Z {
+  requiere: {No hay elementos repetidos entre las primeras componentes de mapeo}
+  requiere: {No hay elementos repetidos entre las segundas componentes de mapeo}
+  requiere: {|frase| &gt; 0 }
+  requiere: {c pertenece a frase}
+  asegura: {(res = 0 y hayQueCodificar (c, mapeo) = false) o (res = cantidad de veces que c aparece en frase y hayQueCodificar (c, mapeo) = true)}
+}
+--}
+
+
+cuantasVecesHayQueCodificar :: Char -&gt; [Char] -&gt; [(Char, Char)] -&gt; Int
+cuantasVecesHayQueCodificar _ _ [] = 0
+cuantasVecesHayQueCodificar letra palabra codificaciones
+    | hayQueCodificar letra codificaciones = cuentoLetra letra palabra
+    | otherwise = 0
+
+
+
+cuentoLetra :: Char -&gt; [Char] -&gt; Int
+cuentoLetra _ [] = 0
+cuentoLetra letra (elegida:resto)
+    | letra == elegida = 1 + cuentoLetra letra resto
+    | otherwise = cuentoLetra letra resto
+
+
+{--
+problema laQueMasHayQueCodificar (frase: seq⟨Char⟩, mapeo: seq⟨Char x Char⟩ ) : Char {
+  requiere: {No hay elementos repetidos entre las primeras componentes de mapeo}
+  requiere: {No hay elementos repetidos entre las segundas componentes de mapeo}
+  requiere: {|frase| &gt; 0 }
+  requiere: {Existe al menos un c que pertenece a frase y hayQueCodificar(c, mapeo)=true}
+  asegura: {res = c donde c es el caracter tal que cuantasVecesHayQueCodificar(c, frase, mapeo) es mayor a cualquier otro caracter perteneciente a frase}
+  asegura: {Si existen más de un caracter c que cumple la condición anterior, devuelve el que aparece primero en frase }
+
+-- --}
+
+laQueMasHayQueCodificar :: [Char] -&gt; [(Char,Char)] -&gt; Char
+laQueMasHayQueCodificar palabra codificaciones = letraMasRepetida (filtroLetras codificaciones palabra)
+
+
+
+letraMasRepetida :: [Char] -&gt; Char
+letraMasRepetida (primera:resto)
+    | cuantasVecesLetra primera (primera:resto) &gt;= cuantasVecesLetra (primero (sacoLetra primera (primera:resto))) resto = primera
+    | otherwise = letraMasRepetida resto
+
+
+cuantasVecesLetra :: Char -&gt; [Char] -&gt; Int
+cuantasVecesLetra _ [] = 0
+cuantasVecesLetra  letra (primera:resto)
+    | letra == primera = 1 + cuantasVecesLetra letra resto
+    | otherwise = cuantasVecesLetra  letra resto
+
+primero :: [Char] -&gt; Char
+primero [] = ' '
+primero (primero:_) = primero
+
+sacoLetra :: Char -&gt; [Char] -&gt; [Char]
+sacoLetra _ [] = []
+sacoLetra letra (primera:resto)
+    | letra == primera = sacoLetra letra resto
+    | otherwise = primera : sacoLetra letra resto
+
+filtroLetras :: [(Char, Char)] -&gt; [Char] -&gt; [Char]
+filtroLetras [] _ = []
+filtroLetras _ [] = []
+filtroLetras (tupla:resto) palabra = filtroLetrasAUX tupla palabra ++ filtroLetras resto palabra
+
+filtroLetrasAUX :: (Char, Char) -&gt; [Char] -&gt; [Char]
+filtroLetrasAUX _ [] = []
+filtroLetrasAUX (a,b) (primeraLetra:resto)
+    | primeraLetra == a = primeraLetra : filtroLetrasAUX (a, b) resto
+    | otherwise = filtroLetrasAUX (a, b) resto 
+
+
+
+buscoEnListaDeTuplas :: Char -&gt; [(Char, Char)] -&gt; Bool
+buscoEnListaDeTuplas  _ [] = False
+buscoEnListaDeTuplas  letra (tupla:resto)
+    | buscoEnTupla letra tupla = True
+    | otherwise = buscoEnListaDeTuplas letra resto
+
+
+{--
+
+problema codificarFrase (frase: seq⟨Char⟩, mapeo: seq⟨Char x Char⟩ ) : seq ⟨Char⟩ {
+  requiere: {No hay elementos repetidos entre las primeras componentes de mapeo}
+  requiere: {No hay elementos repetidos entre las segundas componentes de mapeo}
+  requiere: {|frase| &gt; 0 }
+  asegura: {|res| = | frase|}
+  asegura: { Para todo 0 &lt;= i &lt; |frase| si hayQueCodificar(frase[i], mapeo) = true entonces res[i]= (mapeo[j])1, para un j tal que 0 &lt;= j &lt; |mapeo| y mapeo[j])0=frase[i]}
+  asegura: { Para todo 0 &lt;= i &lt; |frase| si hayQueCodificar(frase[i], mapeo) = false entonces res[i]= frase[i]}
+} 
+--}
+
+
+codificarFrase :: [Char] -&gt; [(Char, Char)] -&gt; [Char]
+codificarFrase [] _ = []
+codificarFrase _ [] = []
+codificarFrase (letra:restoLetras) codificaciones
+    | hayQueCodificar letra codificaciones = cambioLetra letra codificaciones : codificarFrase restoLetras codificaciones
+    | otherwise = letra : codificarFrase restoLetras codificaciones
+
+cambioTupla :: Char -&gt; (Char, Char) -&gt; Char
+cambioTupla letra (a, b)
+    | letra == a = b 
+    | otherwise = letra
+
+cambioLetra :: Char -&gt; [(Char, Char)] -&gt; Char
+cambioLetra letra (tupla:resto)
+    | buscoEnTupla letra tupla = nuevaLetra tupla
+    | otherwise = cambioLetra letra resto
+
+buscoEnTupla :: Char -&gt; (Char, Char) -&gt; Bool
+buscoEnTupla letra (a, b)
+    | letra == a = True
+    | otherwise = False
+
+nuevaLetra :: (Char, Char) -&gt; Char
+nuevaLetra (a, b) = b
+</code></pre>
+<h2>Resultado de la compilacion</h2>
+<pre><code>Loaded package environment from /home/jgodoy/.ghc/x86_64-linux-9.4.7/environments/default
+[1 of 1] Compiling SolucionT2       ( correcciones/haskell-tm/chioli_lautaro_martin_46740345/submission.hs.main.hs, correcciones/haskell-tm/chioli_lautaro_martin_46740345/submission.hs.main.o )
+
+</code></pre>
+<h2>Ejecucion de los tests</h2>
+<h3>tema2-test-ej1.hs.compilacion.out</h3>
+<p>Puntaje del ej: 2 / 2</p>
+<pre><code>
+
+Cases: 9  Tried: 1  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 2  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 3  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 4  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 5  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 6  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 7  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 8  Errors: 0  Failures: 0
+
+
+Cases: 9  Tried: 9  Errors: 0  Failures: 0
+
+
+Cases: 9  Tried: 9  Errors: 0  Failures: 0
+
+</code></pre>
+<h3>tema2-test-ej2.hs.compilacion.out</h3>
+<p>Puntaje del ej: 2 / 2</p>
+<pre><code>
+
+Cases: 9  Tried: 1  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 2  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 3  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 4  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 5  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 6  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 7  Errors: 0  Failures: 0
+
+Cases: 9  Tried: 8  Errors: 0  Failures: 0
+
+
+Cases: 9  Tried: 9  Errors: 0  Failures: 0
+
+
+Cases: 9  Tried: 9  Errors: 0  Failures: 0
+
+</code></pre>
+<h3>tema2-test-ej3.hs.compilacion.out</h3>
+<p>Puntaje del ej: 2 / 2</p>
+<pre><code>
+
+Cases: 8  Tried: 1  Errors: 0  Failures: 0
+
+Cases: 8  Tried: 2  Errors: 0  Failures: 0
+
+Cases: 8  Tried: 3  Errors: 0  Failures: 0
+
+Cases: 8  Tried: 4  Errors: 0  Failures: 0
+
+Cases: 8  Tried: 5  Errors: 0  Failures: 0
+
+Cases: 8  Tried: 6  Errors: 0  Failures: 0
+
+Cases: 8  Tried: 7  Errors: 0  Failures: 0
+
+
+Cases: 8  Tried: 8  Errors: 0  Failures: 0
+
+
+Cases: 8  Tried: 8  Errors: 0  Failures: 0
+
+</code></pre>
+<h3>tema2-test-ej4.hs.compilacion.out</h3>
+<p>Puntaje del ej: 2.62 / 3</p>
+<pre><code>
+
+
+### Failure in: 0:codificarFrase fraseLarga mapeoVacio
+Tema2-test-ej4.hs:18
+expected: &quot;un gran poder blabla&quot;
+ but got: &quot;&quot;
+
+
+Cases: 8  Tried: 1  Errors: 0  Failures: 1
+
+Cases: 8  Tried: 2  Errors: 0  Failures: 1
+
+Cases: 8  Tried: 3  Errors: 0  Failures: 1
+
+Cases: 8  Tried: 4  Errors: 0  Failures: 1
+
+Cases: 8  Tried: 5  Errors: 0  Failures: 1
+
+Cases: 8  Tried: 6  Errors: 0  Failures: 1
+
+Cases: 8  Tried: 7  Errors: 0  Failures: 1
+
+
+Cases: 8  Tried: 8  Errors: 0  Failures: 1
+
+
+Cases: 8  Tried: 8  Errors: 0  Failures: 1
+
+</code></pre>
+<h3>mchoice.json-ej5.compilacion.out</h3>
+<p>Puntaje del ej: 1 / 1</p>
+<pre><code>mchoice ej5: respuesta del alumno=3, respuesta correcta=3
+
+Ran 1 test in 0 seconds
+
+OK
+
+</code></pre>
+<p>FIN</p>
