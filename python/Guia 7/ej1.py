@@ -1,0 +1,177 @@
+# problema pertenece (in s:seq⟨Z⟩, in e: Z) : Bool {
+# requiere: { T rue }
+# asegura: { (res = true) ↔ (existe un i ∈ Z tal que 0 ≤ i < |s| ∧ s[i] = e) }
+# }
+# Implementar al menos de 3 formas distintas.
+
+def pertenece1(lista: list, n: int) -> bool:
+    for i in range(0, len(lista)):
+        if lista[i] == n:
+            return True
+    return False
+
+def pertenece2(lista: list, n: int) -> bool:
+    cont = 0
+    while cont < len(lista):
+        if lista[cont] == n:
+            return True
+        else:
+            cont += 1
+    return False
+
+def pertenece3(lista: list, n: int) -> bool:
+    while lista != []:
+        if lista.pop() == n:
+            return True
+    return False
+
+def pertenece4(lista: list, n: int) -> bool:
+    if n in lista:
+        return True
+    return False
+
+# 2. problema divide a todos (in s:seq⟨Z⟩, in e: Z) : Bool {
+# requiere: { e ̸= 0 }
+# asegura: { (res = true) ↔ (para todo i ∈ Z si 0 ≤ i < |s| → s[i] mod e = 0) }
+# }
+
+
+def divide_a_todos(s: list, n: int) -> bool:
+    for i in range(0, len(s)):
+        if s[i] % n != 0:
+            return False
+    return True
+
+# 3. problema suma total (in s:seq⟨Z⟩) : Z {
+# requiere: { T rue }
+# asegura: { res es la suma de todos los elementos de s }
+# }
+# Nota: no utilizar la funci´on sum() nativa.
+
+def suma(s: list) -> int:
+    total = 0
+    for i in s:
+        total += i
+    return total
+
+# problema maximo (in s:seq⟨Z⟩) : Z {
+# requiere: { |s| > 0 }
+# asegura: { res = al mayor de todos los n´umeros que aparece en s }
+# }
+# Nota: no utilizar la funci´on max() nativa.
+
+def maximo(s: list) -> int:
+    maximo = 0
+    for n in s:
+        if n > maximo:
+            maximo = n
+    return maximo
+
+# problema minimo (in s:seq⟨Z⟩) : Z {
+# requiere: { |s| > 0 }
+# asegura: { res = al menor de todos los n´umeros que aparece en s }
+# }
+# Nota: no utilizar la funci´on min() nativa
+
+def minimo(s: list) -> int:
+    minimo = s[0]
+    for i in s:
+        if i < minimo:
+            minimo = i
+    return minimo
+
+
+
+# problema ordenados (in s:seq⟨Z⟩) : Bool {
+# requiere: { T rue }
+# asegura: { res = true ↔(para todo i ∈ Z si 0 ≤ i < (|s| − 1) → s[i] < s[i + 1] }
+# }
+
+def ordenados(lista: list) -> bool:
+    actual = 0
+    for i in lista:
+        if actual > i:
+            return False
+        actual = i
+    return True
+    
+
+# problema pos maximo (in s:seq⟨Z⟩) : Z {
+# requiere: { T rue }
+# asegura: { (Si |s| = 0, entonces res = −1; si no, res = al ´ındice de la posici´on donde aparece el mayor elemento
+# de s (si hay varios es la primera aparici´on) }
+# }
+
+
+def pos_maximo(s: list) -> int:
+    indiceMax = 0 
+    valorMax = 0
+    if len(s) == 0:
+        return -1
+    for i in range(0, len(s)):
+        if s[i] > valorMax:
+            indiceMax = i
+            valorMax = s[i]
+    return indiceMax
+
+
+# problema pos minimo (in s:seq⟨Z⟩) : Z {
+# requiere: { T rue }
+# asegura: { (Si |s| = 0, entonces res = −1; si no, res = al ´ındice de la posici´on donde aparece el menor elemento
+# de s (si hay varios es la ´ultima aparici´on) }
+# }
+
+def pos_minimo(s: list) -> int:
+    indiceMin = 0 
+    if len(s) == 0:
+        return -1
+    valorMin = s[0]
+    for i in range(0, len(s)):
+        if s[i] <= valorMin:
+            indiceMin = i
+            valorMin = s[i]
+    return indiceMin
+
+# Dada una lista de palabras (seq⟨seq⟨Char⟩⟩), devolver verdadero si alguna palabra tiene longitud mayor a 7. Ejemplo:
+# [“termo”, “gato”, “tener”, “jirafas”], devuelve falso.
+# problema long mayorASiete (in s:seq⟨seq⟨Char⟩⟩) : Bool {
+# requiere: { T rue }
+# asegura: { (res = true) ↔ (existe i ∈ Z tal que (0 ≤ i < (|s| − 1)) y (|s[i]| > 7) }
+# }
+
+def long_mayor_siete(s: list) -> bool:
+    for w in s:
+        if len(w) > 7:
+            return True
+    return False
+
+# Dado un texto en formato string, devolver verdadero si es pal´ındromo (se lee igual en ambos sentidos), falso en caso
+# contrario. Las cadenas de texto vac´ıas o con 1 s´olo elemento son pal´ındromo.
+# problema es palindroma (in s:seq⟨Char⟩) : Bool {
+# requiere: { T rue }
+# asegura: { (res = true) ↔ (s es igual a su reverso) }
+
+# No esta permitido s[i:f], s[-i] o similar!!
+# }
+
+def reverse(s: list) -> list:
+    palabra = []
+    cont = len(s) - 1
+    while cont >= 0:
+        palabra.append(s[cont])
+        cont -= 1
+    return palabra
+
+def es_palindromo(palabra: list) -> bool:
+    if palabra == reverse(palabra):
+        return True
+    return False
+
+#  Recorrer una seq⟨Z⟩ y devolver verdadero si hay 3 n´umeros iguales consecutivos, en cualquier posici´on y False en caso
+# contrario.
+# problema iguales consecutivos (in s:seq⟨Z⟩) : Bool {
+# requiere: { T rue }
+# asegura: { (res = true) ↔ (existe i, j, k ∈ Z tal que (0 ≤ i, j, k < (|s| − 1)) y (i + 2 = j + 1 = k) y
+# (s[i] = s[j] = s[k])) }
+# }
+
