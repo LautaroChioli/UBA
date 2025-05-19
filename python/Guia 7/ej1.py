@@ -175,3 +175,76 @@ def es_palindromo(palabra: list) -> bool:
 # (s[i] = s[j] = s[k])) }
 # }
 
+def iguales_consecutivos(s: list) -> bool:
+    cont = 1
+    last = s[0]
+    for i in range(1, len(s)):
+        if s[i] == last:
+            cont += 1
+            if cont == 3:
+                return True
+        else:
+            cont = 1
+        
+        last = s[i]  
+    return False
+        
+    
+
+
+# 12. Recorrer una palabra en formato string y devolver True si ´esta tiene al menos 3 vocales distintas y False en caso
+# contrario.
+# problema vocales distintas (in s:seq⟨Char⟩) : Bool {
+# requiere: { T rue }
+# asegura: { (res = true) ↔ (existe i, j, k ∈ Z tal que (0 ≤ i, j, k < (|s| − 1)) y (s[i] ̸= s[j] ̸= s[k]) y
+# (s[i], s[j], s[k] ∈ {‘a‘, ‘e‘, ‘i‘, ‘o‘, ‘u‘})) }
+# No esta permitida la funcion remove() nativa
+# }
+
+def vocales_distintas(s: str) -> bool:
+    vocalesCont = []
+    vocales = ['a','e','i','o','u']
+    for letra in s:
+        if letra in vocales and letra not in vocalesCont:
+            vocalesCont.append(letra)
+    if len(vocalesCont) >= 3:
+        return True
+    return False
+            
+
+
+# 13. Recorrer una seq⟨Z⟩ y devolver la posici´on donde inicia la secuencia de n´umeros ordenada m´as larga. Si hay dos
+# subsecuencias de igual longitud devolver la posici´on donde empieza la primera. La secuencia de entrada es no vac´ıa.
+# problema pos secuencia ordenada mas larga (in s:seq⟨Z⟩) : Z {
+# requiere: { |s| > 0 }
+# asegura: { (res = i) ↔ (existe i, j ∈ Z tal que (0 ≤ i, j < (|s| − 1)) y i ≤ j y (para todo k tal que i ≤ k < j →
+# s[k] ≤ s[k + 1]) y j-i+1 es m´aximo e i es el m´ınimo valor que lo cumple) }
+# }
+
+def secuencia_ordenada_mas_larga(s: list) -> int:
+    len_max = 1
+    len_actual = 1
+    inicio_actual = 0
+    inicio_max = 0
+
+    for i in range(1, len(s)):
+        if s[i] >= s[i - 1]:
+            len_actual += 1
+        else:
+            len_actual = 1
+            inicio_actual = i
+
+        if len_actual > len_max:
+            len_max = len_actual
+            inicio_max = inicio_actual
+
+    return inicio_max
+
+
+# 14. Cantidad de d´ıgitos impares.
+# problema cantidad digitos impares (in s:seq⟨Z⟩) : Z {
+# requiere: { Todos los elementos de n´umeros son mayores o iguales a 0 }
+# asegura: { res es la cantidad total de d´ıgitos impares que aparecen en cada uno de los elementos de n´umeros }
+# }
+# Por ejemplo, si la lista de n´umeros es [57, 2383, 812, 246], entonces el resultado esperado ser´ıa 5 (los d´ıgitos impares
+# son 5, 7, 3, 3 y 1).
