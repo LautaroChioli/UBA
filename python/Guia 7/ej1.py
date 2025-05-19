@@ -248,3 +248,31 @@ def secuencia_ordenada_mas_larga(s: list) -> int:
 # }
 # Por ejemplo, si la lista de n´umeros es [57, 2383, 812, 246], entonces el resultado esperado ser´ıa 5 (los d´ıgitos impares
 # son 5, 7, 3, 3 y 1).
+
+# def cantidad_digitos_impares(s: list) -> int:
+#     dig_impares = 0
+#     for numero in s:
+
+
+def int_a_lista_digitos(n: int) -> list:
+    divisor = cifra_mas_alta(n)
+    numero_lista = []
+    digito_actual = 0
+    numero = n
+    while divisor >= 1:
+        digito_actual = 0
+        while numero >= divisor:
+            numero -= divisor
+            digito_actual += 1
+        numero_lista.append(digito_actual)
+        divisor //= 10
+    return numero_lista
+    
+def cifra_mas_alta(n: int) -> int:
+    cifra = n
+    divisor = 10
+    while cifra >= 10:
+        if cifra / divisor <= 10:
+            return divisor
+        divisor *= 10
+    return 1
