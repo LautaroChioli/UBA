@@ -8,7 +8,7 @@ class InterfazBuscaminas:
     def __init__(self, root):
         self.root = root
         self.root.title("Buscaminas")
-        self.estado_juego = crear_juego(8, 8, 10)
+        self.estado_juego = crear_juego(4, 4, 3)
         self.botones = []
         self.crear_interfaz()
         self.actualizar_interfaz()
