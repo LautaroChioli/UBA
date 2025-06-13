@@ -371,7 +371,55 @@ def escape_en_solitario(amigos_por_salas: list[list[int]]) -> list[int]:
 # asegura: {Para cada jugador p perteneciente a claves(estrategias), res[p] es igual a la cantidad de puntos que obtuvo al
 # finalizar el torneo, dado que jug´o una vez contra cada otro jugador.}
 # }
-# 3
+
+"""
+{
+    "Juan": "Desvio",
+    "Pedro": "Desvio",
+    "Marcos" : "No desvio"
+}
+"""
+
+"""
+{
+    ("Pedro", "Juan"): 10,
+}
+"""
+
+def torneo_de_gallinas(estrategias: dict[str, str]) -> dict[str, int]:
+    ya_jugados = {}
+    res = {}
+    for persona in estrategias:
+        actual = []
+        for rival in estrategias:
+            if rival == persona:
+                continue
+            if (rival, persona) in ya_jugados.keys():
+                continue
+            else:
+                if estrategias[persona] == "Desvio":
+                    if estrategias[rival] == "Desvio":
+                        ya_jugados[(persona, rival)] = (-10, -10)
+                    else:
+                        ya_jugados[(persona,rival)] = (-15, 10)
+                else:
+                    if estrategias[rival] == "Desvio":
+                        ya_jugados[(persona, rival)] = (10, -15)
+                    else:
+                        ya_jugados[(persona, rival)] = (-5 , -5)
+    for persona in estrategias.keys():
+        puntaje_persona = 0
+        for tupla in ya_jugados.keys():
+            if tupla[0] == persona:
+                puntaje_persona += ya_jugados[tupla][0]
+            if tupla[1] == persona:
+                puntaje_persona += ya_jugados[tupla][1]
+        res[persona] = puntaje_persona
+                
+    return res
+
+            
+            
 
 
 # Ejercicio 10. Cola en el Banco
@@ -393,7 +441,48 @@ def escape_en_solitario(amigos_por_salas: list[list[int]]) -> list[int]:
 # asegura: {Para todo cliente c1 y cliente c2 de tipo ”vip” pertenecientes a filaClientes si c1 aparece antes que c2 en
 # filaClientes entonces el nombre de c1 aparece antes que el nombre de c2 en res.}
 # }
+from queue import Queue as Cola
 
+
+def imprimir_cola(cola: Cola):
+    print("Contenido de la cola (sin modificarla):")
+    copia = Cola()
+    elementos = []
+
+    while not cola.empty():
+        elem = cola.get()
+        elementos.append(elem)
+        copia.put(elem)  
+
+    for elem in elementos:
+        print(elem)
+    
+    for elem in elementos:
+        cola.put(elem)
+
+esperando = Cola()
+esperando.put(("Juan", "Comun"))
+esperando.put(("Pedro", "VIP"))
+esperando.put(("Marcos", "VIP"))
+esperando.put(("Maria", "Comun"))
+
+def reordenar_cola(filaClientas: Cola[tuple[str, str]]) -> Cola[str]:
+    colaComun = Cola()
+    colaVIP = Cola()
+    colaNueva = Cola()
+    while not filaClientas.empty():
+        actual = filaClientas.get()
+        if actual[1] == "Comun":
+            colaComun.put(actual)
+        else:
+            colaVIP.put(actual)
+    while not colaVIP.empty():
+        nuevo = colaVIP.get()[0]
+        colaNueva.put(nuevo)
+    while not colaComun.empty():
+        nuevoComun = colaComun.get()[0]
+        colaNueva.put(nuevoComun)
+    return colaNueva
 
 # Ejercicio 11. Sufijos que son pal´ındromos
 # Decimos que una palabra es pal´ındromo si se lee igual de izquierda a derecha que de derecha a izquierda. Se nos pide programar
@@ -404,6 +493,51 @@ def escape_en_solitario(amigos_por_salas: list[list[int]]) -> list[int]:
 # }
 # Nota: un sufijo es una subsecuencia de texto que va desde una posici´on cualquiera hasta el al final de la palabra. Ej: ”Diego”,
 # el conjunto de sufijos es: ”Diego”, ”iego”,”ego”,”go”, ”o”. Para este ejercicio no consideraremos a ”” como sufijo de ning´un texto.
+
+def cuantos_sufijos_son_palindromos(text: str) -> int:
+    sufijos = creo_sufijos(text)
+    palindromos_de_sufijos = 0
+    for sufijo in sufijos:
+        if es_palindromo(sufijo):
+            palindromos_de_sufijos += 1
+    return palindromos_de_sufijos - 1
+
+def creo_sufijos(text: str) -> list[str]:
+    sufijos = []
+    primera = []
+    sufijos_res = []
+    for letra in text:
+        primera.append(letra)
+    sufijos.append(primera)
+    for letra in text:
+        palabra = []
+        cont = 0
+        for siguientes in text:
+            if letra == siguientes and cont == 0:
+                cont += 1
+                continue
+            else:
+                palabra.append(siguientes)
+        sufijos.append(palabra)
+        text = palabra
+    return sufijos
+    
+def es_palindromo(text: str) -> bool:
+    reverso = []
+    cont = -1
+    original = []
+    for letra in text:
+        original.append(letra)
+    for letra in text:
+        cont += 1
+    while cont != -1:
+        reverso.append(text[cont])
+        cont -= 1
+    if original == reverso:
+        return True
+    return False
+
+print(cuantos_sufijos_son_palindromos("anana"))
 # Ejercicio 12. Ta-Te-Ti-Facilito
 # Ana y Beto juegan al Ta-Te-Ti-Facilito. El juego es en un tablero cuadrado de lado entre 5 y 10. Cada jugador va poniendo su
 # ficha en cada turno. Juegan intercaladamente y comienza Ana. Ana pone siempre una ”X” en su turno y Beto pone una ”O” en el
@@ -426,6 +560,7 @@ def escape_en_solitario(amigos_por_salas: list[list[int]]) -> list[int]:
 # asegura: {res = 3 ⇔ hay tres ”X” y hay tres ”O” consecutivas en forma vertical (evidenciando que beto hizo trampa).}
 # }
 
+    
 
 # Ejercicio 13. Hospital - Atenci´on por Guardia
 # Desde el Hospital Fernandez nos pidieron solucionar una serie de problemas relacionados con la informaci´on que maneja sobre
