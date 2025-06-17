@@ -537,7 +537,6 @@ def es_palindromo(text: str) -> bool:
         return True
     return False
 
-print(cuantos_sufijos_son_palindromos("anana"))
 # Ejercicio 12. Ta-Te-Ti-Facilito
 # Ana y Beto juegan al Ta-Te-Ti-Facilito. El juego es en un tablero cuadrado de lado entre 5 y 10. Cada jugador va poniendo su
 # ficha en cada turno. Juegan intercaladamente y comienza Ana. Ana pone siempre una ”X” en su turno y Beto pone una ”O” en el
@@ -560,12 +559,54 @@ print(cuantos_sufijos_son_palindromos("anana"))
 # asegura: {res = 3 ⇔ hay tres ”X” y hay tres ”O” consecutivas en forma vertical (evidenciando que beto hizo trampa).}
 # }
 
-    
+[["X","X","O","O","X"],
+ ["O","X","X","X","O"],
+ ["O","O","O","O","X"],
+ ["O","X","X","O","X"],
+ ["X","X","O","X","O"]]
+
+def quien_gano(tablero: list[list[str]]) -> int:
+    if gano_o(tablero) and gano_x(tablero):
+        print("ambos")
+        return 3
+    if gano_o(tablero):
+        print("o")
+        return 2
+    if gano_x(tablero):
+        print("x")
+        return 1
+    else:
+        print("ninguno")
+        return 0
+
+def gano_x(tablero):
+    seguidos = 0
+    for columna in range(len(tablero)):
+        for fila in tablero:
+            if fila[columna] == "X":
+                seguidos += 1
+            else:
+                seguidos = 0
+            if seguidos == 3:
+                return True
+        seguidos = 0
+    return False
+
+def gano_o(tablero):
+    seguidos = 0
+    for columna in range(len(tablero)):
+        for fila in tablero:
+            if fila[columna] == "O":
+                seguidos += 1
+            else:
+                seguidos = 0
+            if seguidos == 3:
+                return True
+    return False
 
 # Ejercicio 13. Hospital - Atenci´on por Guardia
 # Desde el Hospital Fernandez nos pidieron solucionar una serie de problemas relacionados con la informaci´on que maneja sobre
 # los pacientes y el personal de salud. En primer lugar debemos resolver en qu´e orden se deben atender los pacientes que llegan a
-# 4
 # la guardia. En enfermer´ıa, hay una primera instancia que clasifica en dos colas a los pacientes: una urgente y otra postergable
 # (esto se llama hacer triage). A partir de dichas colas que contienen la identificaci´on del paciente, se pide devolver una nueva cola
 # seg´un la siguiente especificaci´on.
@@ -584,7 +625,32 @@ print(cuantos_sufijos_son_palindromos("anana"))
 # asegura: {Para todo c1 y c2 de tipo ”postergable” pertenecientes a postergables si c1 aparece antes que c2 en postergables
 # entonces c1 aparece antes que c2 en res.}
 # }
+urgentes = Cola()
+urgentes.put(0)
+urgentes.put(1)
+urgentes.put(2)
 
+
+postergables = Cola()
+postergables.put(100)
+postergables.put(101)
+postergables.put(102)
+
+def orden_atencion(urgentes: Cola[int], postergables: Cola[int]) -> Cola[int]:
+    res = Cola()
+    for i in range(longitud_cola(urgentes)):
+        res.put(urgentes.get())
+        res.put(postergables.get())
+    return res
+def longitud_cola(cola: Cola):
+    long = 0
+    temp = Cola()
+    while not cola.empty():
+        temp.put(cola.get())
+        long += 1
+    while not temp.empty():
+        cola.put(temp.get())
+    return long
 
 # Ejercicio 14. Hospital - Alarma epidemiol´ogica
 # Necesitamos detectar la aparici´on de posibles epidemias. Para esto contamos con un lista de enfermedades infecciosas y los
@@ -601,6 +667,20 @@ print(cuantos_sufijos_son_palindromos("anana"))
 # enfermedad sobre el total de registros es menor que el umbral, entonces enfermedad no aparece en res.}
 # }
 
+def alarma_epidemiologica(registros: list[tuple[int, str]], infecciosas: list[str], umbral: float) -> dict[str, float]:
+    cant_veces_enfermedad = {}
+    res = {}
+    for paciente in registros:
+        if paciente[1] in infecciosas:
+            if paciente[1] not in cant_veces_enfermedad.keys():
+                cant_veces_enfermedad[paciente[1]] = 1
+            else:
+                cant_veces_enfermedad[paciente[1]] += 1
+    for enfermedad in cant_veces_enfermedad:
+        porcentaje = cant_veces_enfermedad[enfermedad] / len(registros)
+        res[enfermedad] = porcentaje
+    return res
+
 
 # Ejercicio 15. Hospital - Empleado del mes
 # Dado un diccionario con la cantidad de horas trabajadas por empleado, en donde la clave es el ID del empleado y el valor es
@@ -615,6 +695,42 @@ print(cuantos_sufijos_son_palindromos("anana"))
 # los otros IDs, entonces ID pertenece a res.}
 # }
 
+{ 100: [10,9,10],
+ 101: [9,9,14],
+ 102: [9,3,3]}
+
+def empleados_del_mes(horas: dict[int, list[int]]) -> list[int]:
+    mejor_empleado = []
+    mejor_empleado_horas = 0
+    iguales = []
+    menores_en_lista = False
+    for id in horas:
+        horas_totales = sumatoria(horas[id])
+        if horas_totales >= mejor_empleado_horas:
+            mejor_empleado_horas = horas_totales
+            mejor_empleado.append((id, horas_totales))
+            for empleado_anterior in mejor_empleado:
+                if empleado_anterior[1] < mejor_empleado_horas:
+                    menores_en_lista = True
+                if empleado_anterior[1] == mejor_empleado_horas:
+                    iguales.append(empleado_anterior)
+            if menores_en_lista:
+                mejor_empleado.clear()
+                for empleado in iguales:
+                    mejor_empleado.append(empleado)
+            iguales.clear()
+    res = []
+    for empleado in mejor_empleado:
+        res.append(empleado[0])
+    return res
+            
+        
+def sumatoria(l):
+    tot = 0
+    for i in l:
+        tot += i
+    return tot
+        
 
 # Ejercicio 16. Hospital - Nivel de ocupaci´on
 # Queremos saber qu´e porcentaje de ocupaci´on de camas hay en el hospital. El hospital se representa por una matriz en donde
@@ -630,3 +746,15 @@ print(cuantos_sufijos_son_palindromos("anana"))
 # asegura: {Para todo 0 ≤ i < |res| se cumple que res[i] es igual a la cantidad de camas ocupadas del piso i dividido el
 # total de camas del piso i).}
 # }
+
+def nivel_de_ocupacion(camas_por_piso: list[list[bool]]) -> list[float]:
+    ocupacion_por_pisos = []
+    for piso in camas_por_piso:
+        ocupadas = 0
+        for cama in piso:
+            if cama:
+                ocupadas += 1
+        ocupacion_por_pisos.append(ocupadas/len(piso))
+    return ocupacion_por_pisos
+
+print(nivel_de_ocupacion([[True,False,False],[True, True, True],[False,False,False],[False,True,False]]))
