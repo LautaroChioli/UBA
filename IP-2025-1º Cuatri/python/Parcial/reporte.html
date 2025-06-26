@@ -1,0 +1,696 @@
+<h1>Parcial - tema1</h1>
+<p>Nota: 8.0 / 10.0 (APROBADO)</p>
+<pre><code>puntaje ej1: 0.0
+puntaje ej2: 2.5
+puntaje ej3: 2.5
+puntaje ej4: 2
+puntaje ej5: 0.5
+puntaje ej6: 0.5
+</code></pre>
+<h2>Datos del alumno</h2>
+<p>Nombre: Lautaro Martin Chioli</p>
+<p>DNI: 46740345</p>
+<p>LU: </p>
+<p>Maquina: 44-03</p>
+<h2>Enunciado</h2>
+<!doctype html>
+<html>
+<head>
+  <link rel="icon" href="data:,">
+  <link href="css/style.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+
+  <style>
+    th, td {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .conditions {
+        margin-left: 20px;
+    }
+</style>
+</head>
+
+<body style="width: 50%;margin: 1% auto;">
+
+<div> 
+<h1> Parcial Python - Tema 1 </h1>
+
+<h2> Importante </h2>
+
+<ul>
+  <li>El parcial se aprueba con 6 puntos</li>
+  <li>Template de funciones a implementar <a href="#" onclick="forceDownload('/parcial/Template_t1.py','Template_t1.py');">acá</a><br></li>
+  <li>Lista de funciones permitidas <a href="/static/python_permitidas.html">acá</a></li>
+  <li>Para testear el código pueden usar <a href="#" onclick="forceDownload('/parcial/tema1-test.py', 'tema1-test.py')">este</a> archivo que ya cuenta con todo lo necesario para desarrollar sus propios tests (este archivo no se entrega)</li>
+</ul>
+
+Implementar las siguientes especificaciones en Python.
+
+<form name="form1" action="/submit_examen" method="post" enctype="multipart/form-data" onsubmit="return validaciones(event)">
+
+  <hr style="width: 100%;">
+  <h3 style="color:#1A5276">Ejercicio 1 [2 puntos]</h3>
+
+<p>Implementar la función cantidad_parejas_que_suman:</p>
+
+<p> problema cantidad_parejas_que_suman (in <i>s</i>: seq⟨Z⟩, in <i>n</i>: Z) : Z {<br>
+  &nbsp; <strong>requiere:</strong> { - }<br>
+  &nbsp; <strong>asegura:</strong> { res es la cantidad de parejas s[i] y s[j] de números de s tales que s[i] + s[j] = n (con i < j) }<br>
+}<br>
+</p>
+
+<pre style="background-color: #f0f0f0; /* Color de fondo del recuadro */
+padding: 2px; /* Espacio interior */
+border: 1px solid #ccc; /* Borde del recuadro */
+border-radius: 5px; /* Bordes redondeados */">
+Ejemplo: <b>cantidad_parejas_que_suman([1,3,2,5,4,8], 5)</b> debe devolver <b>2</b>
+</pre>
+
+  <hr style="width: 100%;">
+  <h3 style="color:#1A5276">Ejercicio 2 [2,5 puntos] </h3>
+
+<p>En un supermercado tenemos una fila de clientes esperando para ser atendidos por algún cajero.
+  Cada cliente tiene un nombre, un método de pago y una cantidad de productos.
+  La fila de clientes se representa como una Cola de <code>String x String x Z</code>, donde el primer elemento es el nombre del cliente, el segundo es el método de pago y el tercero es la cantidad de productos.
+  Implementar la función pasar_por_autoservicio:
+  </p>
+
+  Nota: los métodos de pago son strings conformados por letras minúsculas.
+
+<p> problema pasar_por_autoservicio (inout <i>clientes</i>: Cola⟨ String x String x Z ⟩) : String {<br>
+  &nbsp; <strong>requiere:</strong>{ Las primeras componentes de <i>clientes</i> son strings no vacíos y todos distintos entre sí }<br>
+  &nbsp; <strong>requiere:</strong>{ Las terceras componentes de <i>clientes</i> son números positivos }<br>
+  &nbsp; <strong>requiere:</strong>{ Existe al menos un elemento <i>c</i> dentro de la cola <i>clientes</i> tal que c<sub>1</sub> ≠ "efectivo" y c<sub>2</sub> ≤ 15 }<br>
+  &nbsp; <strong>modifica:</strong> { <i>clientes</i> }<br>
+  &nbsp; <strong>asegura:</strong> { Sea <i>c</i> el primer elemento insertado en la cola <i>clientes</i> tal que c<sub>1</sub> ≠ "efectivo" y c<sub>2</sub> ≤ 15,
+    entonces <i>res</i> = c<sub>0</sub> }<br>
+  &nbsp; <strong>asegura:</strong> { <i>clientes</i> contiene todos los elementos de <i>clientes@pre</i> excepto la tupla que contiene a res en su primera posición, en el mismo orden que en <i>clientes@pre</i>. }<br>
+  }<br>
+</p>
+<pre style="background-color: #f0f0f0; /* Color de fondo del recuadro */
+padding: 2px; /* Espacio interior */
+border: 1px solid #ccc; /* Borde del recuadro */
+border-radius: 5px; /* Bordes redondeados */">
+Ejemplo: <b>pasar_por_autoservicio(clientes)</b> debe devolver <b>"Bruno"</b> (y quitar su tupla de la cola)
+si clientes es una cola en la cual se insertaron (en orden) los siguientes elementos:
+<ol>
+  <li style="margin: -12px 0;">("Ana", "efectivo", 13)</li>
+  <li style="margin: -12px 0;">("Juan", "qr", 22)</li>
+  <li style="margin: -12px 0;">("Bruno", "tarjeta", 14)</li>
+</ol>
+</pre>
+
+<p>
+  <hr style="width: 100%;">
+  <h3 style="color:#1A5276">3) Ejercicio 3 [2,5 puntos]</h3>
+  <p>Implementar la función intercambiar_e_invertir_columnas:</p>
+
+<p> problema intercambiar_e_invertir_columnas(inout <i>A</i>: seq⟨seq⟨Z⟩⟩, in col1: Z, in col2: Z) {<br>
+  &nbsp; <strong>requiere:</strong> { Todas las filas de <i>A</i> tienen la misma longitud (estrictamente positiva)}<br>
+  &nbsp; <strong>requiere:</strong> { |<i>A</i>| > 0}<br>
+  &nbsp; <strong>requiere:</strong> { 0 ≤ <i>col1</i> < |<i>A</i>[0]| }<br>
+  &nbsp; <strong>requiere:</strong> { 0 ≤ <i>col2</i> < |<i>A</i>[0]| }<br>
+  &nbsp; <strong>requiere:</strong> { <i>col1</i> ≠ <i>col2</i> }<br>
+  &nbsp; <strong>modifica:</strong> { <i>A</i> }<br>
+  &nbsp; <strong>asegura:</strong> { <i>A</i> tiene exactamente las mismas dimensiones que <i>A@pre</i> }<br>
+  &nbsp; <strong>asegura:</strong> { A[i][j] = A@pre[i][j] para todo <i>i</i>, <i>j</i> en rango tal que <i>j</i> ≠ <i>col1</i> y <i>j</i> ≠ <i>col2</i> }<br>
+  &nbsp; <strong>asegura:</strong> { A[i][col1] = A@pre[|A|-1-i][col2] para todo <i>i</i> tal que 0 ≤ <i>i</i> < |<i>A</i>| }<br>
+  &nbsp; <strong>asegura:</strong> { A[i][col2] = A@pre[|A|-1-i][col1] para todo <i>i</i> tal que 0 ≤ <i>i</i> < |<i>A</i>| }<br>
+
+  }<br>
+  </p>
+  <pre style="background-color: #f0f0f0; /* Color de fondo del recuadro */
+  padding: 2px; /* Espacio interior */
+  border: 1px solid #ccc; /* Borde del recuadro */
+  border-radius: 5px; /* Bordes redondeados */">
+
+Ejemplo: Si <b>mat = [[1,2,3],[40,50,60], [-7,-8,-9]]</b>, luego de ejecutarse <br> <b>intercambiar_e_invertir_columnas(mat,1,2)</b>
+ debería ocurrir que <b>print(mat)</b> muestre <b>[[1, -9, -8], [40, 60, 50], [-7, 3, 2]]</b>
+  </pre>
+
+  <hr style="width: 100%;">
+  <h3 style="color:#1A5276">Ejercicio 4 [2 puntos]</h3>
+
+
+  <p>Se realizaron dos censos en los cuales se le preguntó a cada persona en que localidad vive. Estos datos fueron almacenados en 
+    dos diccionarios cuyas claves son los nombres de las personas, y sus valores las localidades en las cuales viven.
+    Implementar la función mantuvieron_residencia:</p>
+
+<p> problema mantuvieron_residencia (in <i>censo1</i>: Diccionario⟨String,String⟩, in <i>censo2</i>: Diccionario⟨String,String⟩): Diccionario⟨String,Z⟩ {<br>
+  &nbsp; <strong>requiere:</strong> { Las claves de censo1 son las mismas que las claves de censo2 }<br>
+  &nbsp; <strong>asegura:</strong> { <i>k</i> es clave de <i>res</i> si y sólo si existe alguna clave <i>p</i> en censo1 tal que al obtener su valor tanto en censo1 como en censo2, este es igual a <i>k</i> }<br>
+  &nbsp; <strong>asegura:</strong> { El valor de cada clave de <i>res</i> representa la cantidad de personas que en ambos censos vivía en esa localidad, es decir, que mantuvieron su residencia en la misma localidad entre ambos censos }<br>
+  }<br>
+  </p>
+  <pre style="background-color: #f0f0f0; /* Color de fondo del recuadro */
+  padding: 2px; /* Espacio interior */
+  border: 1px solid #ccc; /* Borde del recuadro */
+  border-radius: 5px; /* Bordes redondeados */">
+
+Ejemplo: <b>mantuvieron_residencia({'Juan': 'Merlo', 'Ana': 'Merlo'}, {'Juan': 'Castelar', 'Ana': 'Merlo'})</b><br>
+debe devolver <b>{'Merlo': 1}</b>
+  </pre>
+
+<hr style="width: 100%;">
+      <h3 style="color:#1A5276">Ejercicio 5 [0,5 puntos]</h3>
+
+      <p>Dada la siguiente especificación y una posible implementación de la misma, conteste marcando la opción
+        correcta.</p>
+
+      <div style="display: flex; width: 100%;">
+        <div style="flex: 1; padding: 20px; border: 1px solid #ccc;">
+          <p> problema sumar_elementos (in <i>s</i>: seq⟨Z⟩): Z {<br>
+            &nbsp; <strong>requiere:</strong> { - }<br>
+            &nbsp; <strong>asegura:</strong> { res es la suma de los elementos de s }<br>
+              }<br>
+          </p>
+        </div>
+        <div style="flex: 1; padding: 20px; border: 1px solid #ccc;">
+          <code>
+  def sumar_elementos(s: list[int]) -> int:<br/>
+  &nbsp; &nbsp;res: int = 0<br/>
+  &nbsp; &nbsp;for i in range(1, len(s)):<br/>
+  &nbsp; &nbsp;  &nbsp; &nbsp;    res += s[i]<br/>
+  &nbsp; &nbsp;return res<br/>
+</code>
+        </div>
+      </div>
+      <p>
+        <input type="radio" name="mchoice_1" id="Aopcion1" value="1" />
+        <label for="Aopcion1">El código es correcto, calcula lo pedido en la especificación para cualquier input</label>
+        <br>
+        <input type="radio" name="mchoice_1" id="Aopcion2" value="2" />
+        <label for="Aopcion2">El código tiene un bug, y si hacemos un test suite que cubra todas las líneas lo
+          detectaremos</label> <br>
+        <input type="radio" name="mchoice_1" id="Aopcion3" value="3" />
+        <label for="Aopcion3">El código tiene un bug, pero es posible hacer un test suite que cubra todas las líneas y
+          no detectar dicho bug</label> <br>
+      </p>
+
+      <hr style="width: 100%;">
+      <h3 style="color:#1A5276">Ejercicio 6 [0,5 puntos]</h3>
+
+      <p>Supongamos que un programa tiene un ciclo que itera sobre todos los elementos de una lista de tamaño n.
+        Si el programa realiza una operación constante dentro de ese ciclo (por ejemplo, incrementa en 1 cada valor de la lista), ¿cómo afecta el tamaño de la lista al número de operaciones?
+      </p>
+
+        <p>
+          <input type="radio" name="mchoice_2" id="Aopcion1_2" value="1" />
+          <label for="Aopcion1_2"> Si la lista tiene más elementos, el número de operaciones aumentará.</label>
+          <br>
+          <input type="radio" name="mchoice_2" id="Aopcion2_2" value="2" />
+          <label for="Aopcion2_2">El número de operaciones no cambia con el tamaño de la lista.</label> <br>
+          <input type="radio" name="mchoice_2" id="Aopcion3_2" value="3" />
+          <label for="Aopcion3_2">El número de operaciones depende del contenido de la lista, no del tamaño.</label> <br>
+        </p>
+
+      <hr style="width: 100%;">
+      <h3 style="color:#1A5276">Adjunta el archivo con tu solución:</h3>
+      <p><b style="color:red">Solo se puede adjuntar 1 archivo de extensión .py. En caso de haber desarrollado tests
+          propios, no deben ser entregados.</b></p>
+
+      <label for="archivo">Seleccionar archivo a enviar:</label>
+      <input type="file" id="archivo" name="archivo" required accept=".py,text/x-python" />
+
+      <input type="submit" value="Enviar" style="background-color: #1A5276; border-radius: 5px;
+                margin-top:10px;padding: 10px 150px;color: #FFFFFF;
+                font-size: 20px;cursor: pointer; width:100%">
+
+    </form>
+  </div>
+<script>
+  function validaciones(event) {
+    // Obtiene todos los inputs tipo radio del formulario
+      const radioGroups = document.querySelectorAll('input[type="radio"]');
+      const groupedByName = {};
+
+      // Agrupar radios por su atributo name
+      radioGroups.forEach(radio => {
+        if (!groupedByName[radio.name]) {
+          groupedByName[radio.name] = [];
+        }
+        groupedByName[radio.name].push(radio);
+      });
+
+      // Verificar que cada grupo de radios tenga al menos uno seleccionado
+      for (const groupName in groupedByName) {
+        const radios = groupedByName[groupName];
+        const isChecked = radios.some(radio => radio.checked);
+
+        if (!isChecked) {
+          alert(`Debes seleccionar una opción para la pregunta ${groupName}`);
+          return false; // Detener la validación si falta alguna opción
+        }
+      }
+
+      var confirmacion = confirm("Confirmo que revisé mis respuestas y que quiero entregar mi examen");
+      if (!confirmacion) {
+          event.preventDefault();
+          event.returnValue = false;
+          return false;
+        }
+        event.returnValue = true;
+        return true;
+    }
+
+// registro una funcion para mostrar el archivo cuando se adjunta.
+// de esa forma evitamos que se adjunten otros archivos por error
+document
+  .getElementById('archivo')
+  .addEventListener(
+      'change',
+      function () {
+          var fr = new FileReader();
+          fr.onload = function () {
+              alert(this.result);
+          };
+          fr.readAsText(this.files[0]);
+      }
+  );
+
+// para forzar a bajar el template de pytest y que no se pueda abrir en un nuevo tab
+// (el browser intenta mostrar el codigo como HTML y el formato se ve raro)
+function forceDownload(url, filename) {
+  fetch(url).then(function(t) {
+    return t.blob().then((b) => {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(b);
+      a.setAttribute("download", filename);
+      a.click();
+    });
+  });
+}
+</script>
+</body>
+
+</html>
+
+<h2>Solucion entregada por el alumno</h2>
+<pre><code>from queue import Queue as Cola
+
+# Ejercicio 1
+def cantidad_parejas_que_suman(s: list[int], n: int) -&gt; int:
+    indice_siguiente: int = 1
+    pares: list[tuple[int, int]] = []
+    for numero in s:
+        for i in range(len(s)):
+            if i + indice_siguiente &gt; len(s) - 1:
+                continue
+            else:
+                if numero + (s[i + indice_siguiente]) == n:
+                    pares.append((numero, s[i + indice_siguiente]))
+        indice_siguiente += 1
+    return pares
+
+# print(cantidad_parejas_que_suman([1,3,2,5,4,8], 5))
+# print(cantidad_parejas_que_suman([1, 2], 3))
+# print(cantidad_parejas_que_suman([-3, 5], 2))
+# print(cantidad_parejas_que_suman([-2, 2, 2, -2], 0))
+# print(cantidad_parejas_que_suman([0, 0, 0], 0))
+
+# Ejercicio 2
+# n un supermercado tenemos una fila de clientes esperando para ser atendidos por algún cajero. Cada cliente tiene un nombre, un método de pago y una cantidad de productos.
+#  La fila de clientes se representa como una Cola de String x String x Z, donde el primer elemento es el nombre del cliente, el segundo es el método de pago y el tercero es la cantidad de productos.
+#  Implementar la función pasar_por_autoservicio:
+# Nota: los métodos de pago son strings conformados por letras minúsculas.
+
+# problema pasar_por_autoservicio (inout clientes: Cola⟨ String x String x Z ⟩) : String {
+#   requiere:{ Las primeras componentes de clientes son strings no vacíos y todos distintos entre sí }
+#   requiere:{ Las terceras componentes de clientes son números positivos }
+#   requiere:{ Existe al menos un elemento c dentro de la cola clientes tal que c1 ≠ &quot;efectivo&quot; y c2 ≤ 15 }
+#   modifica: { clientes }
+#   asegura: { Sea c el primer elemento insertado en la cola clientes tal que c1 ≠ &quot;efectivo&quot; y c2 ≤ 15, entonces res = c0 }
+#   asegura: { clientes contiene todos los elementos de clientes@pre excepto la tupla que contiene a res en su primera posición, en el mismo orden que en clientes@pre. }
+# }
+# Ejemplo: pasar_por_autoservicio(clientes) debe devolver &quot;Bruno&quot; (y quitar su tupla de la cola)
+# si clientes es una cola en la cual se insertaron (en orden) los siguientes elementos:
+#     (&quot;Ana&quot;, &quot;efectivo&quot;, 13) 
+#     (&quot;Juan&quot;, &quot;qr&quot;, 22)
+#     (&quot;Bruno&quot;, &quot;tarjeta&quot;, 14)
+cola = Cola()
+cola.put((&quot;Ana&quot;, &quot;efectivo&quot;, 13))
+cola.put((&quot;Juan&quot;, &quot;qr&quot;, 22))
+cola.put((&quot;Bruno&quot;, &quot;tarjeta&quot;, 15))
+cola.put((&quot;Marcos&quot;, &quot;tarjeta&quot;, 2))
+
+
+def pasar_por_autoservicio(clientes: Cola[tuple[str, str, int]]) -&gt; str:
+    cola_temp: Cola[tuple[str, str, int]] = Cola()
+    para_autoservicio: str = &quot;&quot;
+    cliente_encontrado: bool = False
+    while not cola.empty():
+        cliente_actual: tuple[str, str, int] = cola.get()
+        if cliente_actual[1] != &quot;efectivo&quot; and cliente_actual[2] &lt;= 15 and not cliente_encontrado:
+            para_autoservicio = cliente_actual[0]
+            cliente_encontrado = True
+        else:
+            cola_temp.put(cliente_actual)
+    while not cola_temp.empty():
+        clientes.put(cola_temp.get())
+    # imprime_cola(clientes)
+    return para_autoservicio
+
+
+# def imprime_cola(cola: Cola):
+#     temp = []
+#     while not cola.empty():
+#         temp.append(cola.get())
+#     print(temp)
+
+# print(pasar_por_autoservicio(cola))
+
+# Ejercicio 3 
+# Implementar la función intercambiar_e_invertir_columnas:
+# problema intercambiar_e_invertir_columnas(inout A: seq⟨seq⟨Z⟩⟩, in col1: Z, in col2: Z) {
+#   requiere: { Todas las filas de A tienen la misma longitud (estrictamente positiva)}
+#   requiere: { |A| &gt; 0}
+#   requiere: { 0 ≤ col1 &lt; |A[0]| }
+#   requiere: { 0 ≤ col2 &lt; |A[0]| }
+#   requiere: { col1 ≠ col2 }
+#   modifica: { A }
+#   asegura: { A tiene exactamente las mismas dimensiones que A@pre }
+#   asegura: { A[i][j] = A@pre[i][j] para todo i, j en rango tal que j ≠ col1 y j ≠ col2 }
+#   asegura: { A[i][col1] = A@pre[|A|-1-i][col2] para todo i tal que 0 ≤ i &lt; |A| }
+#   asegura: { A[i][col2] = A@pre[|A|-1-i][col1] para todo i tal que 0 ≤ i &lt; |A| }
+# }
+
+
+# Ejemplo: Si mat = [[1,2,3],[40,50,60], [-7,-8,-9]], luego de ejecutarse 
+#  intercambiar_e_invertir_columnas(mat,1,2)
+#  debería ocurrir que print(mat) muestre [[1, -9, -8], [40, 60, 50], [-7, 3, 2]]
+
+#  [  1,   2,  3,    4]                    [102,   2, 100,   4]
+#  [ 40,  50, 60,   70] ---------------&gt;   [ -9,  50,  -7,  70]
+#  [ -7,  -8, -9,  -10]                    [ 60,  -8,  40, -10]
+#  [100, 101, 102, 103]                    [  3, 101,   1, 103]
+
+
+
+def intercambiar_e_invertir_columnas(A: list[list[int]], col1: int, col2: int) -&gt; None:
+    primera_columna: list[int] = []
+    for fila in A:
+        primera_columna.append(fila[col1])
+    col_a_cambiar1: list[int] = []
+    for i in range(len(A)- 1, -1, -1):
+        col_a_cambiar1.append(primera_columna[i])
+    segunda_columna: list[int] = []
+    for fila in A:
+        segunda_columna.append(fila[col2])
+    col_a_cambiar2: list[int] = []
+    for i in range(len(A)- 1, -1, -1):
+        col_a_cambiar2.append(segunda_columna[i])
+    indice: int = 0
+    for fila in A:
+        fila[col1] = col_a_cambiar2[indice]
+        fila[col2] = col_a_cambiar1[indice]
+        indice += 1
+    return A
+
+# print(intercambiar_e_invertir_columnas([[1,2,3,4],[40,50,60,70], [-7,-8,-9,-10], [100, 101, 102, 103]], 0, 2))
+
+# Ejercicio 4
+# Se realizaron dos censos en los cuales se le preguntó a cada persona en que localidad vive.
+#  Estos datos fueron almacenados en dos diccionarios cuyas claves son los nombres de las personas, y sus valores las localidades en las cuales viven.
+#  Implementar la función mantuvieron_residencia:
+
+# problema mantuvieron_residencia (in censo1: Diccionario⟨String,String⟩, in censo2: Diccionario⟨String,String⟩): Diccionario⟨String,Z⟩ {
+#   requiere: { Las claves de censo1 son las mismas que las claves de censo2 }
+#   asegura: { k es clave de res si y sólo si existe alguna clave p en censo1 tal que al obtener su valor tanto en censo1 como en censo2,
+#            este es igual a k }
+#   asegura: { El valor de cada clave de res representa la cantidad de personas que en ambos censos vivía en esa localidad,
+#            es decir, que mantuvieron su residencia en la misma localidad entre ambos censos }
+# }
+
+
+# Ejemplo: mantuvieron_residencia({'Juan': 'Merlo', 'Ana': 'Merlo'}, {'Juan': 'Castelar', 'Ana': 'Merlo'})
+
+# debe devolver {'Merlo': 1}
+
+def mantuvieron_residencia(censo1: dict[str, str], censo2: dict[str, str]) -&gt; dict[str, int]:
+    persona_localidad: dict[str, list[str]] = {}
+    res: dict[str, int] = {}
+    for persona in censo1:
+        residencias: list[str] = []
+        residencias.append(censo1[persona])
+        residencias.append(censo2[persona])
+        persona_localidad[persona] = residencias
+    for key in persona_localidad:
+        if persona_localidad[key][0] == persona_localidad[key][1]:
+            if censo1[key] not in res.keys():
+                res[censo1[key]] = 1
+            else:
+                res[censo1[key]] += 1
+    return res
+
+# print(mantuvieron_residencia({'Juan': 'Merlo',    'Ana': 'Merlo', &quot;Pedro&quot;: &quot;Merlo&quot;,   &quot;Marcos&quot;: &quot;Merlo&quot;, &quot;Carlos&quot;: &quot;Quilmes&quot;, &quot;Gonzalo&quot;: &quot;Quilmes&quot;},
+#                              {'Juan': 'Castelar', 'Ana': 'Merlo', &quot;Pedro&quot;: &quot;Quilmes&quot;, &quot;Marcos&quot;: &quot;Merlo&quot;, &quot;Carlos&quot;: &quot;Merlo&quot;,   &quot;Gonzalo&quot;: &quot;Quilmes&quot;}))
+
+# def sumar_elementos(s: list[int]) -&gt; int:
+#    res: int = 0
+#    for i in range(1, len(s)):
+#         res += s[i]
+#    return res
+
+# print(sumar_elementos([]))
+# print(sumar_elementos([2]))
+# print(sumar_elementos([1,2]))
+
+#    apariciones_localidad1: dict[str, int] = {}
+#     apariciones_localidad2: dict[str, int] = {}
+#     res: dict[str, int] = {}
+#     for persona1 in censo1:
+#         if censo1[persona1] not in apariciones_localidad1.keys():
+#             apariciones_localidad1[censo1[persona1]] = 1
+#         else:
+#             apariciones_localidad1[censo1[persona1]] += 1
+#     for persona2 in censo2:
+#         if censo2[persona2] not in apariciones_localidad2.keys():
+#             apariciones_localidad2[censo2[persona2]] = 1
+#         else:
+#             apariciones_localidad2[censo1[persona2]] += 1
+
+</code></pre>
+<h2>Resultado de la compilacion</h2>
+<pre><code>
+</code></pre>
+<h2>Cambios realizados al codigo</h2>
+<p>La respuesta original entregada tenia errores en la compilacion, por lo que los docentes realizaron cambios a la misma. Estos fueron los cambios realizados: </p>
+<pre><code class="language-diff">diff correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/submission.py correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/submission.py.fixed
+
+41a42
+&gt; &quot;&quot;&quot;
+47c48
+&lt; 
+---
+&gt; &quot;&quot;&quot;
+53,54c54,55
+&lt;     while not cola.empty():
+&lt;         cliente_actual: tuple[str, str, int] = cola.get()
+---
+&gt;     while not clientes.empty():
+&gt;         cliente_actual: tuple[str, str, int] = clientes.get()
+</code></pre>
+<h2>Resultado de la compilacion corregida</h2>
+<pre><code>
+</code></pre>
+<h2>Ejecucion de los tests</h2>
+<h3>tema1-test-ej1.py.compilacion.out</h3>
+<p>Puntaje del ej: 0.0 / 2</p>
+<pre><code>test_lista_vacia_devuelve_cero (__main__.Ej1Test) ... FAIL
+test_no_hay_parejas (__main__.Ej1Test) ... FAIL
+test_no_hay_parejas_con_si_mismo (__main__.Ej1Test) ... FAIL
+test_parejas_con_numeros_negativos (__main__.Ej1Test) ... FAIL
+test_parejas_repetidas_cuenta_todas (__main__.Ej1Test) ... FAIL
+test_parejas_suman_valores_varios (__main__.Ej1Test) ... FAIL
+test_suman_cero (__main__.Ej1Test) ... FAIL
+test_todos_forman_pareja (__main__.Ej1Test) ... FAIL
+test_todos_negativos (__main__.Ej1Test) ... FAIL
+test_un_elemento_no_puede_formar_pareja (__main__.Ej1Test) ... FAIL
+
+======================================================================
+FAIL: test_lista_vacia_devuelve_cero (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 24, in test_lista_vacia_devuelve_cero
+    self.assertEqual(res, 0)
+AssertionError: [] != 0
+
+======================================================================
+FAIL: test_no_hay_parejas (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 87, in test_no_hay_parejas
+    self.assertEqual(res, 0)
+AssertionError: [] != 0
+
+======================================================================
+FAIL: test_no_hay_parejas_con_si_mismo (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 45, in test_no_hay_parejas_con_si_mismo
+    self.assertEqual(res, 0)
+AssertionError: [] != 0
+
+======================================================================
+FAIL: test_parejas_con_numeros_negativos (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 59, in test_parejas_con_numeros_negativos
+    self.assertEqual(res, 2)
+AssertionError: [(-1, 6), (-2, 7)] != 2
+
+======================================================================
+FAIL: test_parejas_repetidas_cuenta_todas (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 38, in test_parejas_repetidas_cuenta_todas
+    self.assertEqual(res, 10)
+AssertionError: [(2, 2), (2, 2), (2, 2), (2, 2), (2, 2), (2, 2), (2, 2), (2, 2), (2, 2), (2, 2)] != 10
+
+======================================================================
+FAIL: test_parejas_suman_valores_varios (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 52, in test_parejas_suman_valores_varios
+    self.assertEqual(res, 2)
+AssertionError: [(1, 4), (3, 2)] != 2
+
+======================================================================
+FAIL: test_suman_cero (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 80, in test_suman_cero
+    self.assertEqual(res, 2)
+AssertionError: [(1, -1), (-6, 6)] != 2
+
+======================================================================
+FAIL: test_todos_forman_pareja (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 73, in test_todos_forman_pareja
+    self.assertEqual(res, 3)
+AssertionError: [(1, 6), (3, 4), (5, 2)] != 3
+
+======================================================================
+FAIL: test_todos_negativos (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 66, in test_todos_negativos
+    self.assertEqual(res, 2)
+AssertionError: [(-1, -4), (-2, -3)] != 2
+
+======================================================================
+FAIL: test_un_elemento_no_puede_formar_pareja (__main__.Ej1Test)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/jgodoy/.local/lib/python3.10/site-packages/timeout_decorator/timeout_decorator.py&quot;, line 82, in new_function
+    return function(*args, **kwargs)
+  File &quot;./correcciones/parcial-python-tm/chioli_lautaro_martin_46740345/tema1-test-ej1.py&quot;, line 31, in test_un_elemento_no_puede_formar_pareja
+    self.assertEqual(res, 0)
+AssertionError: [] != 0
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.011s
+
+FAILED (failures=10)
+
+</code></pre>
+<h3>tema1-test-ej2.py.compilacion.out</h3>
+<p>Puntaje del ej: 2.5 / 2.5</p>
+<pre><code>test_cliente_al_final_de_la_cola_se_retira (__main__.Ej2Test) ... ok
+test_cliente_al_inicio_de_la_cola_se_retira (__main__.Ej2Test) ... ok
+test_cliente_al_medio_de_la_cola_se_retira (__main__.Ej2Test) ... ok
+test_cliente_al_medio_de_la_cola_se_retira_y_el_resto_quedan (__main__.Ej2Test) ... ok
+test_selecciona_al_primer_cliente_con_todos_candidatos (__main__.Ej2Test) ... ok
+test_selecciona_al_primer_cliente_con_todos_candidatos_y_el_resto_quedan (__main__.Ej2Test) ... ok
+test_selecciona_al_primer_cliente_con_varios_candidatos (__main__.Ej2Test) ... ok
+test_selecciona_al_primer_cliente_con_varios_candidatos_y_el_resto_quedan (__main__.Ej2Test) ... ok
+test_unico_cliente_se_retira (__main__.Ej2Test) ... ok
+test_unico_cliente_se_retira_y_cola_queda_vacia (__main__.Ej2Test) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.011s
+
+OK
+
+</code></pre>
+<h3>tema1-test-ej3.py.compilacion.out</h3>
+<p>Puntaje del ej: 2.5 / 2.5</p>
+<pre><code>test_intercambiar_e_invertir_columnas_2x3 (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_3x2 (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_con_ceros (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_con_negativos (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_en_matriz_1x2 (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_en_matriz_2x2 (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_en_matriz_3x10 (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_en_matriz_3x3 (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_en_matriz_8x3 (__main__.Ej1Test) ... ok
+test_intercambiar_e_invertir_columnas_iguales (__main__.Ej1Test) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.013s
+
+OK
+
+</code></pre>
+<h3>tema1-test-ej4.py.compilacion.out</h3>
+<p>Puntaje del ej: 2 / 2</p>
+<pre><code>test_no_modifica_inputs (__main__.Ej1Test) ... ok
+test_residencia_mantenida_en_una_localidad (__main__.Ej1Test) ... ok
+test_residencia_mantenida_en_varias_localidades (__main__.Ej1Test) ... ok
+test_residencias_cruzadas_no_mantenidas (__main__.Ej1Test) ... ok
+test_sin_habitantes (__main__.Ej1Test) ... ok
+test_sin_residencia_mantenida (__main__.Ej1Test) ... ok
+test_todos_mantienen_residencia (__main__.Ej1Test) ... ok
+test_todos_se_mudan (__main__.Ej1Test) ... ok
+test_una_sola_persona_mantiene (__main__.Ej1Test) ... ok
+test_una_sola_persona_se_muda (__main__.Ej1Test) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.011s
+
+OK
+
+</code></pre>
+<h3>mchoice.json-ej5.compilacion.out</h3>
+<p>Puntaje del ej: 0.5 / 0.5</p>
+<pre><code>mchoice ej5: respuesta del alumno=3, respuesta correcta=3
+
+Ran 1 test in 0 seconds
+
+OK
+
+</code></pre>
+<h3>mchoice.json-ej6.compilacion.out</h3>
+<p>Puntaje del ej: 0.5 / 0.5</p>
+<pre><code>mchoice ej6: respuesta del alumno=1, respuesta correcta=1
+
+Ran 1 test in 0 seconds
+
+OK
+
+</code></pre>
+<p>FIN</p>
