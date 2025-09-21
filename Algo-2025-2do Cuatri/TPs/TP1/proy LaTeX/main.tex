@@ -1,0 +1,303 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[left=2.5cm,top=3cm,right=2.5cm,bottom=3cm,bindingoffset=0.5cm]{geometry}
+\usepackage{macros/AEDLogica, macros/AEDEspecificacion, macros/AEDTADs}
+\usepackage{caratula}
+
+
+\titulo{Trabajo práctico 1}
+\subtitulo{Especificación de TADs}
+
+\fecha{\today}
+
+\materia{Algoritmos y Estructuras de Datos}
+\grupo{JavaNation} 
+
+\integrante{Chioli, Lautaro}{32/25}{lautaro.chioli@gmail.com}
+\integrante{Temelini, Mateo}{1311/24}{mateotemelini@gmail.com}
+
+% \integrante{Apellido, Nombre2}{002/01}{email2@dominio.com} %
+
+
+% Declaramos donde van a estar las figuras
+% No es obligatorio, pero suele ser comodo
+\graphicspath{{../static/}}
+
+% Asi pueden escribir nuevos comandos. 
+% Este por ejemplo asegura q los nombres 
+% que figuren con una tipografia diferenciada  
+\newcommand{\Tipo}[1]{\mathsf{#1}} 
+% la sintaxis es \newcommand{\nombreDeLaMacro}[cantidadDeParametros]{Lo que va ser remplazado por el macro} 
+\newcommand{\norm}[1]{\vert #1\vert}
+
+
+
+\begin{document}
+
+\maketitle
+\section*{Especificación del TAD}
+
+\begin{tad}{EdR}
+fotocopia ES seq$\langle \text{struct} <\text{ej: } \Z,\text{ opciones: seq}<\Z>>\rangle$
+\\
+asiento ES struct$\langle \textit{alumno: } \Z, \text{ex: fotocopia, presente: bool} \rangle$
+\\
+aula ES seq $\langle \text{seq}<\text{asiento}>\rangle$
+\\
+\\
+\obs{alumno}{\Z}
+\\
+\obs{estudiantes}{\seq{\text{alumno}}}
+\\
+\obs{aula}{\text{aula}}
+\\
+\obs{solución}{\seq{\text{struct}<\text{ej: }\Z, \text{rta: }\Z>}}
+\\
+\obs{exámenes}{\text{dict}<\text{alumno, solución}>}
+\\
+\obs{accesosRestantes}{\Z} \vspace{1cm}
+
+\begin{proc}{EdR}
+   {\In asientosPorFila: \Z,
+   \In resolución: \seq{\text{struct}\struct{ej: \Z, rta: \Z}},
+   \In alumnado: \seq{\text{alumno}},
+   \In parciales: \text{fotocopia}}
+   {
+   \Tipo{EdR}}
+   \\
+   \requiereLargo{alumnosVálidos (alumnado) \ \land \\
+   tamañoVálido (asientosPorFila, alumnado) \ \land \\
+   soluciónVálido(resolución, parciales) \ \land \\
+   parcialesValidos (parciales)}
+   \aseguraLargo{|res.aula| = asientosPorFila\ \land \\ crearAula(asientosPorFila, alumnado, parciales) \ \land \\
+   exámenesInicializados (alumnado) \ \land \\
+   res.estudiantes = alumnado \ \land \\
+   res.solución = resoluciòn \ \land \\
+   res.accesosRestantes = 0}
+
+\end{proc} \vspace{1cm}
+
+\predLargo{alumnosVálidos}{alumnado: \seq{alumno}}{
+    (\forall i: \Z)(0 \leq i < |alumnado| \xrightarrow{}_L (alumnado[i] \neq 0 \ \land \ (\forall j: \Z)((0 \leq j < |alumnado| \land i \neq j) \xrightarrow{}_L alumnado[i] \neq alumnado[j])))
+}
+
+\predLargo{tamañoVálido}{n: \Z, alumnado: \seq{alumno}}{n > 0 \ \land \ 0 < |alumnado| \leq cantidadMáximaEstudiantes(n)}
+
+\aux{cantidadMáximaEstudiantes}{filas: \Z}{\Z}{((filas + 1)/ 2) * f}\\
+
+\predLargo{soluciónValida}{sol: \seq{\text{struct}\langle ej: \Z, rta: T\rangle}, parciales: fotocopia}{(|sol| > 0 \ \land \ |sol| = |parciales|)\  \land_L \ (\forall t:\Z)(0 \leq t < |sol| \xrightarrow{}_L (\exists k: \Z)(0 \leq k < |parciales|\  \land_L \ (sol[t].ej = parciales[k].ej \ \land \ sol[t].rta \in parciales[k].opciones)))}
+\newpage
+\predLargo{parcialesVálidos}{parciales: fotocopia}{(\forall k: \Z)(0 \leq k < |parciales| \xrightarrow{}_L (|parciales[k].opciones| = 10 \ \land_L \ (\forall a, b : \Z)((0 \leq a < 10 \ \land \ 0 \leq b < 10 \ \land \ a \neq b) \xrightarrow{}_L parciales[k].opciones[a] \neq parciales[k].opciones[b]}
+
+\predLargo{crearAula}{n: \Z, alumnado: \seq{alumno}, parcial: fotocopia}{existenciaEnAula (res, alumnado) \ \land \ unicidadEnAula(res) \ \land \ alumnosSeparados(res) \ \land \ copiaAsignada(res, alumnado, parcial)}
+\\
+\predLargo{existenciaEnAula}{salón: aula, est: \seq{alumno}, parcial: fotocopia}{(\forall alumno \in est)((\exists fila, col: \Z)((0 \leq fila < |salón| \ \land \ 0 \leq col < |salon[fila]|) \land_L (salón[fila][col].alumno = alumno \ \land \ salón[fila][col].ex = parcial \ \land \ salón[fila][col].presente = true)))}
+
+\predLargo{alumnosSeparados}{salón: aula}{(\forall p, q: \Z)((0 \leq p < |salón| \ \land \ 0 \leq q < |salón[p] - 1) \xrightarrow{}_L (salón[p][q].alumno  \neq 0 \xrightarrow{}_L salón[p][q + 1].alumno = 0}
+
+\predLargo{examenesInicializados}{res: EdR, est: \seq{alumno}}{(\forall a: alumno)((a \in est \xrightarrow{}_L a \in res.examenes)\ \land_L \ res.exámenes[a] = <>}
+
+\vspace{1.4cm}
+\begin{proc}{igualdad}
+    {
+    \In i_1: EdR,
+    \In i_2: EdR
+    }
+    {
+    \Tipo{bool}
+    }
+    {
+    \requiere{True}
+    }
+    {
+    \asegura{res = true \iff (mismaSecuencia(i_1.estudiantes, i_2.estudiantes \ \land \\ mismaAula(i_1.aula, i_2.aula) \ \land \\
+    mismaSolución(i_1.solución, i_2.solución) \ \land \\
+    mismaResolución(i_1.exámenes, i_2.exámenes) \ \land \\ i_1.accesos\_restantes = i_2.accesos\_restantes)}
+    }
+    
+\end{proc}
+
+\predLargo{mismaSecuencia}{a_1: \seq{\Z}, a_2: \seq{\Z}}{|a_1| = |a_2| \ \land_L \ (\forall i:\Z)(0 \leq i < |a_1| \xrightarrow{}_L (|a_1[i]| = |a_2[i]| \ \land_L \ mismaDistribuciónFila(a_1[i], a_2[i])))}
+
+\predLargo{mismaDistribuciónFila}{f_1: \seq{asiento}, f_2: \seq{asiento}}{(\forall j:\Z)(0 \leq j < |f_1| \xrightarrow{}_L (f_1[j].alumno = f_2[j].alumno \ \land \ mismaFotocopia(f_1[j].ex, f_2[j].ex) \ \land \ f_1[j].presente = f_2[j].presente))}
+
+\predLargo{mismaFotocopia}{f_1: fotocopia, f_2: fotocopia}{|f_1| = |f_2| \ \land_L \ (\forall i: \Z)(0 \leq i < |f_1| \xrightarrow{}_L (f_1[i].ej = f_2[i].ej \ \land \\mismaSecuencia(f_1[i].opciones, f_2[i].opciones)))}
+
+\pred{mismaSolución}{s_1: solución, s_2: solución}{|s_1| = |s_2| \ \land_L \ respuestasIguales(s_1, s_2) = |s_1|}\vspace{0.5cm}
+
+\auxLargo{respuestasIguales}{s_1: solución, s_2: solución}{\Z}{\sum_{k = 0}^{|s_1| - 1} (IfThenElse(ejercicioIdentico(k, s_1, s_2), 1, 0))}
+\newpage
+\predLargo{ejercicioIdentico}{enunciado: \Z, sol_1: solución, sol_2: solución}{(\exists j: \Z)(0 \leq j < |sol_2| \ \land_L \ (sol_1[enunciado].ej = sol_2[j].ej \ \land \ sol_1[enunciado].rta = sol_2[j].rta))}
+
+\predLargo{mismaResolución}{a_1: \dict{alumno, solución}, a_2: \dict{alumno, solución}}{(\forall e: alumno)(e \in a_1 \iff e \in a_2) \ \land_L \ (\forall e: alumno)(e \in a_1 \xrightarrow{}_L mismaSolución(a_1[e], a_2[e]))}\\
+\vspace{1cm}
+
+\begin{proc}{copiarse}
+    {\Inout i: \Tipo{EdR},
+    \In a_1: alumno}
+    {}
+    {\requiereLargo{existenciaEnAula(i.aula, a_1) \ \land \\
+    |i.exámenes[a_1]| < |i.solución| \ \land \\
+    i = i_0}}
+    {\aseguraLargo{posibilidadDeCopiarse(i, i_0, a_1) \ \land \\
+    i.estudiantes = i_0.estudiantes \ \land \newline
+    i.aula = i_0.aula \ \land \\
+    i.solución = i_0.solucion \ \land \\ i.accesos\_restantes = i_0.accesos\_restantes
+    }}
+\end{proc}
+\\
+\predLargo{posibilidadDeCopiarse}{i: \Tipo{EdR}, i_0: \Tipo{EdR}, a_1: \Tipo{alumno}}{((\exists a_2 \in i_0.estudiantes)(puedeCopiarse(i_0,a_1, a_2)) \ \land_L \\ agregarEjercicio(i_0.exámenes[a_1], i_0.exámenes[a_2], i.exámenes[a_1])) \ \lor_L \\ (\lnot \exists a_2 \in i_0.estudiantes)(puedeCopiarse(i_0, a_1, a_2)) \ \land_L \\ mismaResolución(i.examenes, i_0.examenes)}
+\\
+\predLargo{puedeCopiarse}{i: \Tipo{EdR}, a_1: \Tipo{alumno}, a_2: \Tipo{alumno}}{(a_2 \neq a_1) \ \land_L \ (\exists p_1, p_2: \struct{fila: \Z, col: \Z})((sacarPosición(i.aula, a_1, p_1) \ \land \ sacarPosición(i.aula, a_2, p_2)) \ \land_L \ sonCercanos(p_1, p_2)) \ \land_L \ existeEjerciciosDisponibles(i.examenes[a_1], i.examenes[a_2])}
+\\
+\predLargo{sonCercanos}{ubi_1: \struct{fila: \Z, col: \Z}, ubi_2: \struct{fila: \Z, col: \Z}}{(u_2.fila = u_1.fila \ \land \ |u_2.col - u_1.col| \leq 2) \ \lor \\ (u_2.fila = u_1.fila - 1 \ \land \ |u_2.col - u_1.col| \leq 2)}
+\\
+\predLargo{sacarPosición}{salón: \Tipo{aula}, a: \Tipo{alumno}, pos: \struct{fila: \Z, col: \Z}}{
+(\exists f: \Z)(0 \leq f < |salón| \ \land_L \ (\exists c: \Z)(0 \leq c < |salón[f]| \ \land_L \ salón[f][c].alumno = a \ \land_L \ (pos.fila = f \ \land \ pos.col = c)))
+}
+\\
+\predLargo{existeEjercicioDisponible}{p_1: \Tipo{solución},p_2: \Tipo{solución}}{(\exists punto: \struct{ej: \Z, rta: \Z})(punto \in p_2 \ \land \ \lnot(\exists t \in p_1)(t.ej = punto.ej))}
+\\
+\predLargo{agregarEjercicio}{p_1: \Tipo{solución}, p_2: \Tipo{solución}, res: \Tipo{solución}}{
+|res| = |p_1| + 1 \ \land \ (\exists punto: \struct{ej: \Z, rta: \Z})(punto \in p_2 \ \land \ \lnot(\exists t: \struct{ej: \Z, rta: \Z})(t \in p_1 \ \land \ t.ej = punto.ej) \ \land_L \ res = p_1 ++ <punto>
+}
+
+
+
+\newpage
+\begin{proc}{consultarDarkWeb}
+    {
+    \inout i: \Tipo{EdR},
+    \In examenDark: \Tipo{solución},
+    \In entradas: \Z
+    }{}
+    {
+    \requiereLargo{|examenDark| = |i.solución| \ \land \\
+    entradas \leq i.accesos\_restantes \ \land \\
+    i = i_0}
+    }
+    {
+    \aseguraLargo{(\exists consultantes: \seq{alumno})(|consultantes| \leq entradas \ \land_L \\ examenCopiado(i, i_0, examenDark, consultantes)) \ \land \\
+    i.estudiantes = i_0.estudiantes \ \land \ i.aula = i_0.aula \ \land \ i.solución = i_0.solución \ \land \ i.accesos\_restantes = i_0.accesos\_restantes - entradas}
+
+    }
+\end{proc}
+
+\vspace{1cm}
+\predLargo{examenCopiado}{i: \Tipo{EdR}, i_0: \Tipo{EdR}, solDark: \Tipo{solución}, est: \seq{alumno}}{(\forall a: alumno)((a \in est \ \land \ a \in i_0.estudiantes) \xrightarrow{}_L i.examenes[a] = solDark) \ \land \ 
+(\forall b: alumno)((b \notin est \ \land \ b \in i_0.estudiantes) \xrightarrow{}_L i.examenes[b] = i_0.examenes[b]) }
+
+\vspace{2cm}
+
+\begin{proc}{resolver}
+    {\inout i: \Tipo{EdR},
+    \In a: \Tipo{alumno},
+    \In pasos: \seq{solución}}
+    {\Tipo{\seq{solución}}}
+    {
+    \requiere{existenciaEnAula(i.aula, a) \ \land \ i.examenes[a] = <> \ \land \ i = i_0 \ \land \\ 
+    pasosValidos (pasos, i.solucion)}
+    }
+    { % pone \espacio entre \land porque si no el and queda pegado al texto -->  \ \land \ .
+    \aseguraLargo{\norm{res} = \norm{pasos} + 1 \ \land_L \ (\exists ejAux: struct <ej: \Z, rta: \Z>) \\ (actualizarExamenes (i, i0, a, pasos, res, ejAux)) \ \land \\ 
+    i.estudiantes = i_0.estudiantes \ \land \ i.aula = i_0.aula \ \land \ i.solución = i_0.solución \ \land \ i.accesos\_restantes = i_0.accesos\_restantes}
+    }
+\end{proc} \\
+
+\predLargo{actualizarExámenes}{i: \Tipo{EdR}, i_0: \Tipo{EdR}, a: \Tipo{alumno}, pasos: \seq{solución}, res: \seq{solución}, ejAux: \struct{ej: \Z, rta: \Z}}{
+ejercicioValido(i.solución, ejAux, pasos) \ \land \ secuenciaFinal(pasos, res, ejAux) \ \land \ verificarExámenes(i.exámenes, i_0.exámenes, a, res)
+}
+\\
+\predLargo{pasosVálidos}{pasos: \seq{solución}, sol: \Tipo{solución}}{
+(1 \leq |pasos| \leq |sol| + 1 \ \land_L \ pasos[0] = <>) \ \land \ (\forall k: \Z)(0 \leq k < |pasos| - 1 \xrightarrow{}_L (\forall j: \Z)(0 \leq j < |pasos[k]| \xrightarrow{} pasos[k][j] \in pasos[k+1]))
+}
+\\
+\predLargo{ejercicioVálido}{s: \Tipo{solución}, resp: \struct{ej: \Z, rta: \Z}, procesos: \seq{solución}}{
+(\exists k: \Z)(0 \leq k < |s| \ \land \ s[k].ej = resp.ej) \ \land \ (\lnot \exists j: \Z)(0 \leq j  < |proceso[|proceso| - 1]| \ \land \ proceso [|proceso| - 1][j].ej = resp.ej))(
+}
+\newpage
+\predLargo{secuenciaFinal}{entrada: \seq{solución}, salida: \seq{solución}, ad: \struct{ej: \Z, rta: \Z}}{
+(\forall i : \Z)(0 \leq i < |entrada| \xrightarrow{}_L salida[i] = entrada[i]) \ \land \ salida[|salida| - 1] = salida[|entrada| - 1] ++ <ad.ej, ad.rta>
+}\\
+\predLargo{verificarExámenes}{exs: \dict{alumno, solución}, exs_0: \dict{alumno, solución}, a: \Tipo{alumno}, salida: \seq{solución}}{
+(\forall c \in exs_0)(c \neq a \xrightarrow{}_L exs[c] = exs_0[c]) \ \land \ exs[a] = salida[|salida| - 1]
+}
+
+
+\\
+\vspace{1,4cm}
+\begin{proc}{entregar}
+    {
+    \Inout i: \Tipo{EdR},
+    \In a: \Tipo{alumno}
+    }{}
+    {
+    \requiere{existenciaEnAula (i.aula, a) \ \land \ i = i0}
+    }
+    {
+    \asegura{i.estudiantes = i0.estudiantes \ \land \ i.solucion = i0.solucion \ \land \ i.examenes = i0.examenes \ \land \ i.accesos\_restantes = i0.accesos\_restantes}
+    }
+\end{proc} 
+
+\predLargo{quitarEstudiante}{salón: aula, a: alumno}{\norm{res} = \norm{salón} \ \land_L \ (alumnoRemovido (salón, a, res) \ \land \ restoPresente (salón, a, res))}
+
+\predLargo{alumnoRemovido}{salón: aula, a: alumno, res: aula}{(\forall fila: \Z) (0 \leq fila < \norm{salón} \implicaLuego (\forall col \Z) (0 \leq col < \norm{salón[fila]} \implicaLuego (salón[fila][col].alumno = a \implicaLuego (res[fila][col].alumno = a \ \land \ res[fila][col].presente = false))))}
+
+\predLargo{restoPresente}{salón: aula, a: alumno, res: aula}{(\forall fila: \Z) (0 \leq fila < \norm{salón} \implicaLuego (\forall col \Z) (0 \leq col < \norm{salón[fila]} \implicaLuego (salón[fila][col].alumno \neq a \implicaLuego (res[fila][col] \ \land \ salón[fila][col]))))}
+
+\vspace{2cm}
+
+\begin{proc}{chequearCopias}
+    {
+    \In i: \Tipo{EdR}
+    }
+    {
+    \Tipo{estudiantes}
+    }
+    {
+    \requiere{aulaVacia (i.aula, i.estudiantes}
+    }
+    {
+    \asegura{(\forall est \in i.estudiantes) (est \in res \leftrightarrow examenRepetido (est, i) \lor esSospechoso (est,i))}
+    }
+    
+\end{proc} 
+
+\predLargo{examenRepetido}{a: alumno, i: EdR}{(\exists alumnado: \seq{alumno}) ((\norm{alumnado} \geq \norm{i.estudiantes} / 4 \ \land \ a \in alumnado) \ \land_L \ (\forall b \in alumnado) (mismaSolución (i.exámenes[a], i.exámenes[b])))}
+
+\predLargo{aulaVacia}{salón: aula, i: EdR}{(\forall a: alumno) (a \in i.estudiantes \implicaLuego \neg existenciaEnAula (salón, a))}
+
+\predLargo{esSospechoso}{a: alumno, i: EdR}{(\exists e \in i.estudiantes) (a \neq e \ \land_L \ (sonCercanos (sacarPosición (i.aula, a), sacarPosición(i.aula, e)) \ \land \ respuestasIguales (i.exámenes [a], i.exámenes [e]) \geq 0,6 * \norm{i.solución}))}
+
+\vspace{2cm}
+\begin{proc}{corregir}
+    {
+    \In i: \Tipo{EdR}
+    }
+    {
+    \Tipo{\seq{\text{struct}<a: \Tipo{alumno}, n: \R>}}
+    }
+    {
+    \requiere{aulaVacia (i.aula, i.estudiantes)}
+    }
+    {
+    \asegura{(\forall alumno \in i.estudiante) (esSospechoso (alumno, i) \implicaLuego \neg recibiraNota (alumno, i, res))}
+    \asegura{(\forall alumno \in i.estudiante) (\neg esSospechoso (alumno, i) \implicaLuego  recibiraNota (alumno, i, res))}
+    }
+\end{proc} 
+
+\predLargo{recibiraNota}{a: alumno, i: Edr, corregidos: \seq{\text{struct}<\text{a: alumno}, \text{n: }\R>}}{(\exists k: \Z, n: \R) (0 \leq k < \norm{corregidos} \ \land_L \ corregidos[k].a = a \ \land \ \\ verificarNota (a, corregidos, i.solución, i.exámenes[a]))}
+
+\predLargo{verificarNota}{a: alumno, res: \seq{\text{struct}<\text{a: alumno}, \text{n: }\R>, s: solución, p: solución}}{(\exists j: \Z) (0 \leq j < \norm{res} \ \land_L \ res[j].a = a \ \land \ respuestasIguales (s, p) \ / \ \norm{s})}
+
+
+\end{tad}
+
+
+
+
+
+
+
+\end{document}
