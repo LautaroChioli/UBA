@@ -63,7 +63,7 @@ public class ListaEnlazada<T> {
             actual = actual.sig;
             cont ++;
         }
-        System.out.println("Obteniendo índice " + i + ", valor encontrado: " + actual.valor);
+
         return actual.valor;
     }
 
