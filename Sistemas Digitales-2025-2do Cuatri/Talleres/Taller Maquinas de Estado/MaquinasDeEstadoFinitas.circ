@@ -235,4 +235,63 @@
     <wire from="(700,110)" to="(790,110)"/>
     <wire from="(700,210)" to="(790,210)"/>
   </circuit>
+  <circuit name="EjercicioB1">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="EjercicioB1"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="simulationFrequency" val="4.0"/>
+    <comp lib="0" loc="(260,380)" name="Clock"/>
+    <comp lib="0" loc="(380,450)" name="Pin">
+      <a name="appearance" val="classic"/>
+    </comp>
+    <comp lib="0" loc="(540,60)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="south"/>
+      <a name="output" val="true"/>
+    </comp>
+    <comp lib="0" loc="(850,60)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="south"/>
+      <a name="output" val="true"/>
+    </comp>
+    <comp lib="1" loc="(630,270)" name="XNOR Gate"/>
+    <comp lib="4" loc="(440,260)" name="D Flip-Flop">
+      <a name="appearance" val="logisim_evolution"/>
+    </comp>
+    <comp lib="4" loc="(650,260)" name="D Flip-Flop">
+      <a name="appearance" val="logisim_evolution"/>
+    </comp>
+    <wire from="(260,380)" to="(340,380)"/>
+    <wire from="(340,310)" to="(340,380)"/>
+    <wire from="(340,310)" to="(430,310)"/>
+    <wire from="(340,380)" to="(590,380)"/>
+    <wire from="(380,450)" to="(460,450)"/>
+    <wire from="(400,230)" to="(400,270)"/>
+    <wire from="(400,230)" to="(510,230)"/>
+    <wire from="(400,270)" to="(430,270)"/>
+    <wire from="(460,320)" to="(460,450)"/>
+    <wire from="(460,450)" to="(670,450)"/>
+    <wire from="(490,270)" to="(540,270)"/>
+    <wire from="(490,310)" to="(510,310)"/>
+    <wire from="(510,230)" to="(510,310)"/>
+    <wire from="(540,270)" to="(540,290)"/>
+    <wire from="(540,290)" to="(560,290)"/>
+    <wire from="(540,60)" to="(540,270)"/>
+    <wire from="(560,230)" to="(560,250)"/>
+    <wire from="(560,230)" to="(710,230)"/>
+    <wire from="(590,310)" to="(590,380)"/>
+    <wire from="(590,310)" to="(640,310)"/>
+    <wire from="(630,270)" to="(640,270)"/>
+    <wire from="(670,320)" to="(670,450)"/>
+    <wire from="(700,270)" to="(710,270)"/>
+    <wire from="(710,230)" to="(710,270)"/>
+    <wire from="(710,270)" to="(850,270)"/>
+    <wire from="(850,60)" to="(850,270)"/>
+  </circuit>
+  <circuit name="EjercicioB2">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="EjercicioB2"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="simulationFrequency" val="4.0"/>
+  </circuit>
 </project>
