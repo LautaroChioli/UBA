@@ -1,0 +1,10 @@
+
+SET R0, 0x01
+SET R1, 0x01
+MOV R2, R0
+loop:
+ADD R0, R1
+MOV R2, R0
+ADD R1, R0
+MOV R2, R1
+JMP loop

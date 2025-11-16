@@ -1,0 +1,8 @@
+     |00| SET R0 , 0x01
+     |02| SET R1 , 0x01
+     |04| MOV R2 , R0
+loop |06| ADD R0 , R1
+     |08| MOV R2 , R0
+     |0a| ADD R1 , R0
+     |0c| MOV R2 , R1
+     |0e| JMP loop

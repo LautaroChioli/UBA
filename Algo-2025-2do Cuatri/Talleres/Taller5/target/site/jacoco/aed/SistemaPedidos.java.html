@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SistemaPedidos.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">labo4</a> &gt; <a href="index.source.html" class="el_package">aed</a> &gt; <span class="el_source">SistemaPedidos.java</span></div><h1>SistemaPedidos.java</h1><pre class="source lang-java linenums">package aed;
+
+public class SistemaPedidos {
+    private ABB&lt;Pedido&gt; pedidosPorId;
+    private ListaEnlazada&lt;EntradaPedido&gt; pedidosPorLlegada;
+
+    private class EntradaPedido {
+        Pedido pedido;
+        ABB&lt;Pedido&gt;.HandleABB handle; 
+
+<span class="fc" id="L11">        EntradaPedido(Pedido p, ABB&lt;Pedido&gt;.HandleABB h) {</span>
+<span class="fc" id="L12">            this.pedido = p;</span>
+<span class="fc" id="L13">            this.handle = h;</span>
+<span class="fc" id="L14">        }</span>
+    }
+
+    
+
+<span class="fc" id="L19">    public SistemaPedidos(){</span>
+<span class="fc" id="L20">        this.pedidosPorId = new ABB&lt;Pedido&gt;();</span>
+        // Usamos tu implementación de ListaEnlazada
+<span class="fc" id="L22">        this.pedidosPorLlegada = new ListaEnlazada&lt;EntradaPedido&gt;();</span>
+<span class="fc" id="L23">    }</span>
+
+    public void agregarPedido(Pedido pedido){
+<span class="fc" id="L26">        ABB&lt;Pedido&gt;.HandleABB handle = this.pedidosPorId.insertar(pedido);</span>
+<span class="fc" id="L27">        EntradaPedido nuevaEntrada = new EntradaPedido(pedido, handle);</span>
+<span class="fc" id="L28">        this.pedidosPorLlegada.agregarAtras(nuevaEntrada);</span>
+<span class="fc" id="L29">    }</span>
+
+    public Pedido proximoPedido(){
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (this.pedidosPorLlegada.longitud() == 0) {</span>
+<span class="nc" id="L33">            return null; // No hay pedidos</span>
+        }
+        
+        // 1. Obtener el próximo pedido de la cola (O(1) con tu obtener(0))
+<span class="fc" id="L37">        EntradaPedido proximaEntrada = this.pedidosPorLlegada.obtener(0);</span>
+        
+        // 2. Eliminarlo de la lista de llegada (O(1) con tu eliminar(0))
+<span class="fc" id="L40">        this.pedidosPorLlegada.eliminar(0);</span>
+        
+        // 3. Eliminar el pedido del ABB usando el handle (O(log n) avg)
+<span class="fc" id="L43">        proximaEntrada.handle.eliminar();</span>
+        
+        // 4. Devolver el pedido
+<span class="fc" id="L46">        return proximaEntrada.pedido;</span>
+    }
+
+    public Pedido pedidoMenorId(){
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if (this.pedidosPorId.cardinal() == 0) {</span>
+<span class="nc" id="L51">            return null;</span>
+        }
+<span class="fc" id="L53">        return this.pedidosPorId.minimo();</span>
+    }
+
+    public String obtenerPedidosEnOrdenDeLlegada(){
+<span class="fc" id="L57">        StringBuffer sb = new StringBuffer(&quot;[&quot;); </span>
+        
+        // Usamos tu iterador
+<span class="fc" id="L60">        ListaEnlazada&lt;EntradaPedido&gt;.ListaIterador iter = this.pedidosPorLlegada.iterador();</span>
+        
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        while (iter.haySiguiente()) {</span>
+            // iter.siguiente() llama a obtener(i), que es O(n)
+<span class="fc" id="L64">            EntradaPedido entrada = iter.siguiente(); </span>
+<span class="fc" id="L65">            sb.append(entrada.pedido.toString()); </span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            if (iter.haySiguiente()) {</span>
+<span class="fc" id="L67">                sb.append(&quot;, &quot;);</span>
+            }
+        }
+        
+<span class="fc" id="L71">        sb.append(&quot;]&quot;);</span>
+<span class="fc" id="L72">        return sb.toString();</span>
+    }
+
+    /**
+     * Devuelve un string con los pedidos ordenados por su identificador.
+     * Utiliza el iterador del ABB.
+     * Complejidad: O(n).
+     */
+    public String obtenerPedidosOrdenadosPorId(){
+        // Cambio a StringBuffer
+<span class="fc" id="L82">        StringBuffer sb = new StringBuffer(&quot;{&quot;); </span>
+        
+<span class="fc" id="L84">        ABB&lt;Pedido&gt;.ABB_Iterador iter = this.pedidosPorId.iterador();</span>
+        
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        while (iter.haySiguiente()) {</span>
+<span class="fc" id="L87">            sb.append(iter.siguiente().toString());</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">            if (iter.haySiguiente()) {</span>
+<span class="fc" id="L89">                sb.append(&quot;, &quot;);</span>
+            }
+        }
+        
+<span class="fc" id="L93">        sb.append(&quot;}&quot;);</span>
+<span class="fc" id="L94">        return sb.toString();</span>
+    }}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

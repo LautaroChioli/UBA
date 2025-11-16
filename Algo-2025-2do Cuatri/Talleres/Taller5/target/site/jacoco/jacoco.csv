@@ -1,0 +1,11 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+labo4,aed,ABB.HandleABB,0,22,0,0,0,7,0,3,0,3
+labo4,aed,ListaEnlazada,172,91,18,6,53,29,14,8,4,6
+labo4,aed,Pedido,0,22,0,0,0,7,0,3,0,3
+labo4,aed,ABB.ABB_Iterador,5,75,1,13,1,23,1,9,0,3
+labo4,aed,ListaEnlazada.ListaIterador,0,28,0,2,0,7,0,4,0,3
+labo4,aed,SistemaPedidos,4,130,2,10,2,32,2,10,0,6
+labo4,aed,ABB.Nodo,0,21,0,0,0,7,0,1,0,1
+labo4,aed,SistemaPedidos.EntradaPedido,0,12,0,0,0,4,0,1,0,1
+labo4,aed,ABB,84,257,10,36,23,80,10,27,3,11
+labo4,aed,ListaEnlazada.Nodo,0,9,0,0,0,1,0,1,0,1
