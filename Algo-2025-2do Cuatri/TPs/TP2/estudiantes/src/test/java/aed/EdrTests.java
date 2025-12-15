@@ -220,9 +220,7 @@ class EdrTests {
             new NotaFinal(10.0, 1),
             new NotaFinal(10.0, 0)
         };
-
         assertTrue(Arrays.equals(notas_finales_esperadas, notas_finales));
-
     }
 
     @Test

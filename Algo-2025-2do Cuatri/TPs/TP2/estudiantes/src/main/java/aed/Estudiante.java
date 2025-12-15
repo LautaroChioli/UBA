@@ -2,52 +2,62 @@ package aed;
 
 import java.util.ArrayList;
 
-public class Estudiante {
+public class Estudiante implements Comparable<Estudiante> {
     public int id;
     public ArrayList<Integer> respuestas;
     public boolean entrego;
     public boolean sospechoso;
     public double nota;
+    public int fila; // posición en el aula (fila)
+    public int columna; // posición en el aula (columna)
     public int resueltos;
-    public int fila; // posición en el aula
-    public int columna; // posición en el aula
-    public int handleHeap; // posición en el heap
 
     // Constructor
     public Estudiante(int id, int largoCanonico, int ladoAula) {
         this.id = id;
         this.entrego = false;
         this.sospechoso = false;
-        this.nota = 0;
-        this.resueltos = 0;
+        this.nota = 0.0;
         this.respuestas = new ArrayList<>();
+        this.resueltos = 0;
 
-        // inicializar todas las respuestas con -1
+        // Inicializamos todas las respuestas con -1
         for (int i = 0; i < largoCanonico; i++) {
             this.respuestas.add(-1);
         }
 
-        // calcular posición en el aula
+        // Calculamos su posición en el aula
         int cantAlumnosPorFila = ladoAula / 2;
         if (ladoAula % 2 != 0) {
-            cantAlumnosPorFila++; // si impar, sumamos 1
+            cantAlumnosPorFila++; // Si es impar, sumamos 1
         }
         this.fila = id / cantAlumnosPorFila;
         this.columna = id % cantAlumnosPorFila;
-        this.handleHeap = -1; // inicialmente no tiene posición en el heap
     }
 
-    // Verificar si otro estudiante es vecino
-    public boolean esVecino(Estudiante otro) {
-        // vecinos horizontales (separación de 1 asiento)
-        if (this.fila == otro.fila && (this.columna - otro.columna == 2 || otro.columna - this.columna == 2)) {
-            return true;
-        }
+    // Comparador
+    @Override
+    public int compareTo(Estudiante otro) {
 
-        // vecinos verticales (separación de una fila)
-        if (this.columna == otro.columna && (this.fila - otro.fila == 1 || otro.fila - this.fila == 1)) {
-            return true;
+        // Prioridades:
+
+        // Primero: los que no entregaron van antes
+        if (this.entrego && !otro.entrego) {
+            return 1;
         }
-        return false;
+        if (!this.entrego && otro.entrego) {
+            return -1;
+        }
+        
+        // Segundo (en caso de empate): nota menor antes
+        if (this.nota < otro.nota) {
+            return -1;
+        }
+        if (this.nota > otro.nota) {
+            return 1;
+        }
+        
+        // Tercero (en caso de empate en entrega y nota): desempata por id (menor id primero)
+        return Integer.compare(this.id, otro.id);
     }
 }

@@ -2,178 +2,147 @@ package aed;
 
 import java.util.ArrayList;
 
-public class Heap {
-    private ArrayList<HeapStruct> array;
+public class Heap<T extends Comparable<T>> {
+    private ArrayList<HandleHeap> array; // elementos del heap genérico
     private int cantidad; // número de elementos en el heap
-    private ArrayList<Estudiante> estudiantes; // lista de estudiantes para actualizar los handles
 
-    public Heap(int capacidad, ArrayList<Estudiante> estudiantes) { // Crearlo -> O (E)
-        this.array = new ArrayList<>(estudiantes.size()); // array de tamaño a lo sumo |estudiantes|
+    public Heap(int capacidad) { // Crearlo -> O(E)
+        this.array = new ArrayList<>(capacidad); // array de tamaño |estudiantes|
         this.cantidad = 0;
-        this.estudiantes = estudiantes;
     }
 
-    public void agregar(HeapStruct elem) { // O (log E)
+    // Método para inserción rápida (sin ordenar) en el heap
+    public Handle<T> insertarRapido(T elem) { // O(1)
+        HandleHeap handle = new HandleHeap(elem, cantidad); // O(1)
         if (cantidad < array.size()) {
-            array.set(cantidad, elem);
+            array.set(cantidad, handle);
         } else {
-            array.add(elem); // O(1)
+            array.add(handle);
         }
-        estudiantes.get(elem.id).handleHeap = cantidad;
-        siftUp(cantidad); // O (log E)
-        cantidad++;
+        cantidad++; // incrementamos la cantidad de elementos
+        return handle;
     }
 
-    public HeapStruct consultarMinimo() { // O (1)
+    // Método para agregar elementos y posteriormente ordenarlos (sólo utilizado en el método consultarDarkWeb)
+    public Handle<T> agregar(T elem) { // O(log E)
+        HandleHeap handle = new HandleHeap(elem, cantidad);
+        // Insertamos en la siguiente posición libre del heap
+        if (cantidad < array.size()) {
+            array.set(cantidad, handle); // O(1)
+        } else {
+            array.add(handle); // O(1)
+        }
+        // Reordenamos
+        siftUp(cantidad); // O(log E)
+        cantidad++; // O(1)
+        return handle;
+    }
+
+    public T consultarMinimo() { // O(1) 
         if (cantidad == 0) {
             return null;
         }
-        return array.get(0);
+        return array.get(0).valor();
     }
 
-    public HeapStruct sacarMinimo() { // O (log E)
+    public T sacarMinimo() { // O(log E)
         if (cantidad == 0) {
             return null;
         }
-        HeapStruct minimo = array.get(0);
-        estudiantes.get(minimo.id).handleHeap = -1;
-        // mover último al primero
-        if (cantidad == 1) {
-            array.remove(0);
-            cantidad = 0;
-            return minimo;
-        }
-        HeapStruct ultimo = array.get(cantidad - 1);
-        array.set(0, ultimo);
-        estudiantes.get(ultimo.id).handleHeap = 0;
 
-        // quitamos el último
-        array.remove(cantidad - 1);
-        cantidad--;
+        T minimo = array.get(0).valor();
+        HandleHeap ultimo = array.get(cantidad - 1);
 
-        // reordenamos
-        siftDown(0);
+        array.set(0, ultimo); // llevamos ultimo elem a la raiz
+        ultimo.posicion = 0;
+        cantidad--; // reducimos antes de siftDown
+
+        siftDown(0); // reordenamos en O(log E)
 
         return minimo;
     }
 
-    public void actualizar(int posicion) { // O (log E)
-        if (posicion < 0 || posicion >= cantidad) {
-            return;
-        }
-        siftUp(posicion);
-        siftDown(posicion);
-    }
-
-    private void siftUp(int i) { // O (log E)
+    private void siftUp(int i) { // O(log E)
         int padre = (i - 1) / 2;
-        while (i > 0 && comparar(array.get(i), array.get(padre)) < 0) {
-            swap(i, padre);
-            i = padre;
-            padre = (i - 1) / 2;
+
+        // Este ciclo se ejecuta a lo sumo la altura del heap veces -> O(log E)
+        while (i > 0 && array.get(i).valor().compareTo(array.get(padre).valor()) < 0) {
+            swap(i, padre); // O(1)
+            i = padre; // O(1)
+            padre = (i - 1) / 2; // O(1)
         }
     }
 
-    private void siftDown(int i) { // O (log E)
-        int menor = i;
-        boolean sePuedeOrdenar = true;
-        while (sePuedeOrdenar) {
+    private void siftDown(int i) { // O(log E)
+        boolean continuar = true; // O(1)
+
+        while (continuar) { // O(log E)
             int hijoIzq = 2 * i + 1;
             int hijoDer = 2 * i + 2;
-            menor = i;
+            int menor = i;
 
-            if (hijoIzq < cantidad && comparar(array.get(hijoIzq), array.get(menor)) < 0) {
+            // Buscamos el menor de los tres índices
+            if (hijoIzq < cantidad && array.get(hijoIzq).valor().compareTo(array.get(menor).valor()) < 0) { // O(1)
                 menor = hijoIzq;
             }
-            if (hijoDer < cantidad && comparar(array.get(hijoDer), array.get(menor)) < 0) {
+            if (hijoDer < cantidad && array.get(hijoDer).valor().compareTo(array.get(menor).valor()) < 0) { // O(1)
                 menor = hijoDer;
             }
 
-            if (menor != i) {
-                swap(i, menor);
+            //Si el menor no es el actual, swapeamos
+            if (menor != i) { // O(1)
+                swap(i, menor); // O(1)
                 i = menor;
             } else {
-                sePuedeOrdenar = false;
+                continuar = false;
             }
         }
     }
 
-    private void swap(int i, int k) { // O (1)
-        HeapStruct elem1 = array.get(i);
-        HeapStruct elem2 = array.get(k);
-        array.set(i, elem2);
-        array.set(k, elem1);
+    private void swap(int i, int j) { // O(1)
 
-        // actualizar handles
-        estudiantes.get(array.get(i).id).handleHeap = i;
-        estudiantes.get(array.get(k).id).handleHeap = k;
+        HandleHeap temp1 = array.get(i);
+        HandleHeap temp2 = array.get(j);
+
+        // Swap de elementos
+        array.set(i, temp2);
+        array.set(j, temp1);
+
+        // Actualizamos la posición de cada handle
+        temp1.posicion = j;
+        temp2.posicion = i;
     }
 
-    private int comparar(HeapStruct a, HeapStruct b) { // Comparador -> O (1)
-        // 1) Prioridad: quien NO entregó primero
-        if (!a.entrego && b.entrego) return -1;
-        if (a.entrego && !b.entrego) return 1;
-
-        // 2) Nota ascendente
-        if (a.nota < b.nota) return -1;
-        if (a.nota > b.nota) return 1;
-
-        // 3) Si empataron en estado de entrega y nota, desempate por id ascendente
-        if (a.id < b.id) return -1;
-        if (a.id > b.id) return 1;
-
-        return 0; // serían iguales
+    // Método privado que sólo es invocado por un handle al cambiar su valor
+    // Ahora el Edr no lo llama directamente porque el reordenamiento del heap debe ser una operación interna del mismo heap
+    private void actualizar(HandleHeap h) { // O(log E)
+        int pos = h.posicion;
+        siftUp(pos);
+        siftDown(pos);
     }
 
-    public void cambioDeEstado(int posicion) { // O (log E)
-        if (posicion < 0 || posicion >= cantidad) {
-            return;
-        }
-        array.get(posicion).entrego = true; // O (1)
-        actualizar(posicion); // reordena en O (log E)
-    }
+    // Clase interna y privada que implementa los handles del heap
+    // Guarda el valor genérico de tipo T y la posición actual de ese valor dentro del array del heap
+    // Ahora el Edr no llama a la clase HandleHeap, sino que interactúa con la interface Handle (ahora nunca visualiza ni crea un HandleHeap)
+    private class HandleHeap implements Handle<T> {
+        private T valor; // Valor almacenado en el heap
+        private int posicion; // Índice actual en el array del heap
 
-    public void cambioDeNota(int posicion, double nuevaNota) { // O (log E)
-        if (posicion < 0 || posicion >= cantidad) {
-            return;
-        }
-        array.get(posicion).nota = nuevaNota; // O (1)
-        actualizar(posicion); // reordena en O (log E)
-    }
-
-    // clase interna del struct del Heap
-    public static class HeapStruct {
-        public boolean entrego;
-        public double nota;
-        public int id;
-
-        public HeapStruct(int idEstudiante, boolean entrego, double nota) {
-            this.id = idEstudiante;
-            this.entrego = entrego;
-            this.nota = nota;
-        }
-    }
-
-    // clase interna del Handle que referencia posición en el Heap
-    public static class HandleHeap implements Handle<Integer> {
-        private int posicion;
-
-        public HandleHeap(int pos) {
+        // Constructor privado para ser llamado en el heap
+        private HandleHeap(T valor, int pos) {
+            this.valor = valor;
             this.posicion = pos;
         }
 
         @Override
-        public Integer valor() {
-            return posicion;
+        public T valor() { // Devuelve el valor asociado al handle
+            return valor;
         }
 
         @Override
-        public void eliminar() {
-            // el Handle no elimina elementos del Heap, entonces no debe implementarse
-        }
-
-        public void setPosicion(int pos) {
-            this.posicion = pos;
+        public void actualizarValor(T nuevoValor) { // Cambia el valor del handle y luego el heap decide como reordenarse
+            this.valor = nuevoValor;
+            Heap.this.actualizar(this);
         }
     }
 }

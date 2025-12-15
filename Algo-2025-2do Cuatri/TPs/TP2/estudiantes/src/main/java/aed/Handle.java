@@ -7,7 +7,7 @@ public interface Handle<T> {
     public T valor();
 
     /**
-     * Elimina al elemento de la colección
+     * Dado un valor, lo reubica en el heap
      */
-    public void eliminar();
+    public void actualizarValor(T valor);
 }

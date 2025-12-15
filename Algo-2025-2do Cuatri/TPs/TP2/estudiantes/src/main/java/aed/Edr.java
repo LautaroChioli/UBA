@@ -5,10 +5,11 @@ public class Edr {
 
     private ArrayList<Estudiante> estudiantes; // array de estudiantes
     private ArrayList<Integer> canonico; // plantilla del examen
-    private Heap puntajeMin; // heap de puntajes
-    private int ladoAula;
-    private int cantEstudiantes;
-    private int cantSospechosos;
+    private Heap<Estudiante> puntajeMin; // heap de puntajes
+    private int ladoAula; // representa el lado del aula
+    private int cantEstudiantes; // representa la cantidad de estudiantes que hay en el aula
+    private int cantSospechosos; // representa la cantidad de estudiantes sospechosos que hay 
+    private ArrayList<Handle<Estudiante>> handles; // array de Handles que referencian la posición de cada estudiante en el heap
 
     public Edr(int LadoAula, int Cant_estudiantes, int[] ExamenCanonico) {
         this.ladoAula = LadoAula;
@@ -17,82 +18,96 @@ public class Edr {
 
         // Creamos el var canonico
         this.canonico = new ArrayList<>();
-        for (int i = 0; i < ExamenCanonico.length; i++) { // O (R)
+        for (int i = 0; i < ExamenCanonico.length; i++) { // O(R)
             this.canonico.add(ExamenCanonico[i]);
         }
 
-        // Creamos el var estudiantes y el heap
-        this.estudiantes = new ArrayList<>(); // O (E)
-        this.puntajeMin = new Heap(Cant_estudiantes, estudiantes); // O (E)
-        for (int i = 0; i < Cant_estudiantes; i++) { // O(E * R)
-            Estudiante e = new Estudiante(i, ExamenCanonico.length, LadoAula);
-            estudiantes.add(e); // O (R) por estudiante -> O (E * R)
-
-            Heap.HeapStruct hs = new Heap.HeapStruct(i, false, 0.0);
-            puntajeMin.agregar(hs); // O(1) por estudiante, porque no hace sift up ni sift down  -> O (E)
+        // Creamos el var estudiantes
+        this.estudiantes = new ArrayList<>(); // O(E)
+        for (int i = 0; i < cantEstudiantes; i++) { // O(E * R)
+            Estudiante e = new Estudiante(i, ExamenCanonico.length, ladoAula);
+            estudiantes.add(e);
         }
 
-    } // Complejidad Total: O (R) + O (E) + O (E) + O (E * R) = O (E * R)
+        // Array de Handles
+        this.handles = new ArrayList<>(cantEstudiantes); // O(E)
+        for (int i = 0; i < cantEstudiantes; i++) { // O(E)
+            handles.add(null); // O(1)
+        }
+
+        // Creamos el heap genérico con insertarRapido
+        this.puntajeMin = new Heap<>(cantEstudiantes);// O(E)
+        for (Estudiante e : estudiantes) { // O(E)
+            Handle<Estudiante> h = puntajeMin.insertarRapido(e); // O(1)
+            handles.set(e.id, h); // O(1)
+        }
+    } // Complejidad Total: O(R) + O(E) + O(E * R) + O(E) + O(E) + O(E) + O(E) = O(E * R)
 
 
 //-------------------------------------------------NOTAS--------------------------------------------------------------------------
 
 
     public double[] notas(){
-        // construimos el array resultado de tamaño igual a la cantidad de estudiantes
-        double[] res = new double[cantEstudiantes]; // O (E)
-        // recorremos la lista de estudiantes por id y copiamos la nota
-        for (int i = 0; i < cantEstudiantes; i++) { // O (E)
-            Estudiante e = estudiantes.get(i); // O (1)
-            res[e.id] = e.nota; // O (1)
+        // Construimos el array resultado de tamaño igual a la cantidad de estudiantes
+        double[] res = new double[cantEstudiantes]; // O(E)
+        // Recorremos la lista de estudiantes por id y copiamos la nota
+        for (int i = 0; i < cantEstudiantes; i++) { // O(E)
+            res[i] = estudiantes.get(i).nota; // O(1)
         }
         return res;
-    } // Complejidad total: O(E)
+    } // Complejidad total: O(E) + O(E) = O(E)
 
 
 //------------------------------------------------COPIARSE------------------------------------------------------------------------
 
 
     public void copiarse(int estudiante) {
-        Estudiante est = estudiantes.get(estudiante); // O (1)
-        int MayorRespuestasDiferentes = -1; // O (1)
-        int idMVecinoMasDiferente = -1; // O (1)
-        ArrayList<Integer> candidatos = vecinos(est); // O (1) -> la cantidad de vecinos siempre está acotada
+        Estudiante est = estudiantes.get(estudiante); // O(1)
+        int MayorRespuestasDiferentes = -1; // O(1)
+        int idMVecinoMasDiferente = -1; // O(1)
+        ArrayList<Integer> candidatos = vecinos(est); // O(1) -> la cantidad de vecinos siempre está acotada
 
-        for (int vecinoID : candidatos){ // máximo 5 vecinos -> O (1) pero a cada vecino le recorremos su examen -> O (R)
+        // Contamos cuantas respuestas distintas a las del estudiante tiene cada vecino
+        for (int vecinoID : candidatos){ // máximo acotado de vecinos -> O(1) pero a cada vecino le recorremos su examen -> O(R)
             Estudiante vecino = estudiantes.get(vecinoID);
             int cont = 0;
-            for (int i = 0; i < est.respuestas.size(); i++){ // O (R)
+            for (int i = 0; i < est.respuestas.size(); i++){ // O(R)
                 if (vecino.respuestas.get(i) != -1 && est.respuestas.get(i) == -1){
                     cont++;
                 }
             }
-            if (cont > MayorRespuestasDiferentes || (cont == MayorRespuestasDiferentes && vecino.id > idMVecinoMasDiferente && cont != 0)){
+            // Si el vecino actual tiene mas respuestas distintas, pasa a ser el que mas diferencias tiene y si empatan, se elige el de mayor ID
+            if (cont > MayorRespuestasDiferentes || (cont == MayorRespuestasDiferentes && vecino.id > idMVecinoMasDiferente && cont != 0)){ // O(1)
                 MayorRespuestasDiferentes = cont;
                 idMVecinoMasDiferente = vecino.id;
             }
         }
-
-        if (idMVecinoMasDiferente == -1 || MayorRespuestasDiferentes == 0){
+        
+        // Si no encontramos a nadie con respuestas distintas no hacemos nada
+        if (idMVecinoMasDiferente == -1 || MayorRespuestasDiferentes == 0){ // O(1)
             return;
         }
 
         Estudiante vecino = estudiantes.get(idMVecinoMasDiferente);
 
-        for (int i = 0; i < est.respuestas.size(); i++){ // O (R)
+        // Copiamos la primer respuesta distinta del vecino elegido
+        for (int i = 0; i < est.respuestas.size(); i++){ // O(R)
             if (vecino.respuestas.get(i) != -1 && est.respuestas.get(i) == -1) {
                 est.respuestas.set(i, vecino.respuestas.get(i));
+                // Si la respuesta es correcta sumamos nota
                 est.resueltos++;
                 if (vecino.respuestas.get(i) == canonico.get(i)) {
                     est.nota += 100.0 / canonico.size();
                 }
-                puntajeMin.cambioDeNota(est.handleHeap, est.nota); // O (log E)
+                // Actualizamos el heap usando el handle
+                handles.get(est.id).actualizarValor(est); // O(log E) -> Edr llama al método definido en la interface del Handle (no sabe cómo se implementa el método dentro de la clase HandleHeap)
                 break;
             }
         }
     }
 
-    private ArrayList<Integer> vecinos(Estudiante est) { // Todo este método es O (1) puesto que la cantidad de vecinos posibles son acotadas y los cálculos de posiciones también se consiguen en O (1)
+    // Verificamos los vecinos disponibles del estudiante y los insertamos en el array
+    private ArrayList<Integer> vecinos(Estudiante est) { // Todo este método es O(1) puesto que la cantidad de vecinos posibles son acotadas y los cálculos de sus posiciones también se consiguen en O(1)
         ArrayList<Integer> vecs = new ArrayList<>();
         int cantAlumnosPorFila = ladoAula / 2;
         if (ladoAula % 2 != 0) {
@@ -101,14 +116,14 @@ public class Edr {
 
         int indiceAsiento = est.id;
 
-        // Misma fila: Asiento - 1
-        if (estudiantes.get(indiceAsiento - 1).fila == est.fila) {
+        // Misma fila: asiento - 1
+        if (indiceAsiento != 0 && estudiantes.get(indiceAsiento - 1).fila == est.fila) {
             int idVec = indiceAsiento - 1;
             if (idVec < cantEstudiantes) {
                 vecs.add(idVec);
             }
         }
-        // Misma fila: Asiento + 1
+        // Misma fila: asiento + 1
         if (indiceAsiento + 1 < cantEstudiantes && estudiantes.get(indiceAsiento + 1).fila == est.fila) {
             int idVec = indiceAsiento + 1;
             if (idVec < cantEstudiantes) {
@@ -119,148 +134,147 @@ public class Edr {
         // Fila adelante
         int filaAdelante = est.fila - 1;
         if(filaAdelante >= 0){
-            // Fila atrás: Mismo Asiento
+            // Fila adelante: mismo asiento
             int idVecMismoAsiento = indiceAsiento - cantAlumnosPorFila;
             vecs.add(idVecMismoAsiento);
         }
         return vecs;
-    } // Complejidad Total: O (R) + O (R) + O (log E) = 2 * O (R) + O (log E) = O (R + log E)
+    } // Complejidad Total: O(R) + O(R + log E) = O(R + log E)
 
 
 //-----------------------------------------------RESOLVER----------------------------------------------------------------
 
 
     public void resolver(int estudiante, int NroEjercicio, int res) {
+        // Modificamos la respuesta del estudiante
         Estudiante e = estudiantes.get(estudiante); // O(1)
         e.respuestas.set(NroEjercicio, res); // O(1)
-        e.resueltos += 1; // O(1)
-
+        e.resueltos++;
+        // Si la respuesta es correcta sumamos nota
         if (res == canonico.get(NroEjercicio)) { // O(1)
             e.nota += 100.0 / canonico.size(); // O(1)
         }
-        puntajeMin.cambioDeNota(e.handleHeap, e.nota); // O (log E)
-    } // Complejidad Total: O (log E)
+        // Actualizamos el heap usando el handle correspondiente
+        handles.get(estudiante).actualizarValor(e); // O(log E) -> Edr llama al método definido en la interface del Handle (no sabe cómo se implementa el método dentro de la clase HandleHeap)
+    } // Complejidad Total: O(log E)
 
 
 //------------------------------------------------CONSULTAR DARK WEB-------------------------------------------------------
 
 
     public void consultarDarkWeb(int n, int[] examenDW) {
-        ArrayList<Heap.HeapStruct> nPeores = new ArrayList<>(n); // O (n)
-
-        // Metemos a los n peores al array nuevo. Hay que sacarlos si o si del heap.
-        for (int i = 0; i < n; i++) { // O (n * log E)
-            Heap.HeapStruct minimo = puntajeMin.consultarMinimo(); // O (1)
+        // Creamos un nuevo array, donde meteremos a los n peores (sacándolos del heap)
+        ArrayList<Estudiante> nPeores = new ArrayList<>(n); // O(n)
+        for (int i = 0; i < n; i++) { // O(n * log E)
+            Estudiante minimo = puntajeMin.consultarMinimo(); // O(1)
             if (minimo == null || minimo.entrego) {
                 break;
             }
-            minimo = puntajeMin.sacarMinimo(); // O (log E)
+            minimo = puntajeMin.sacarMinimo(); // O(log E)
             nPeores.add(minimo);
         }
 
-        // Reescribimos los datos de esos n peores
-        for (Heap.HeapStruct elem : nPeores) { // O (n)
-            Estudiante e = estudiantes.get(elem.id);
+        // Actualizamos los datos de esos n peores
+        for (Estudiante e : nPeores) { // O(n)
             e.resueltos = examenDW.length;
             e.nota = 0;
 
-            for (int k = 0; k < examenDW.length; k++) { // O (R)
+            for (int k = 0; k < examenDW.length; k++) { // O(R)
                 e.respuestas.set(k, examenDW[k]);
                 if (examenDW[k] == canonico.get(k)) {
                     e.nota += 100.0 / canonico.size();
                 }
-            } // -> O (n * R)
-            // Actualizamos su nota en el heap al reinsertarlos
-            elem.nota = e.nota;
-            puntajeMin.agregar(elem); // reinsertar -> O (log E)
-        }
-    } // Complejidad Total: O (n * log E) + O (n * R) + O (n * log E) = O (n * (R + log E))
+            }
+            // Agregamos el estudiante actualizado al heap (su handle se actualiza automáticamente dentro del método 'agregar')
+            Handle<Estudiante> h = puntajeMin.agregar(e); // O(log E)
+            handles.set(e.id, h); // O(1)
+        } // Complejidad del for anidado: O(n * (R + log E))
+    } // Complejidad Total: O(n) + O(n * log E) + O(n * (R + log E)) = O(n * (1 + log E + R + log E)) = O(n * (R + log E))
 
  
 //-------------------------------------------------ENTREGAR-------------------------------------------------------------
 
 
-    public void entregar(int estudiante) { // O (log E)
-        Estudiante e = estudiantes.get(estudiante); // O (1)
-        e.entrego = true; // O (1)
-        puntajeMin.cambioDeEstado(e.handleHeap); // O (log E)
-    } // Complejidad Total: O (log E)
+    public void entregar(int estudiante) { // O(log E)
+        // Marcamos que el estudiante entregó y acutalizamos el heap
+        Estudiante e = estudiantes.get(estudiante); // O(1)
+        e.entrego = true; // O(1)
+        handles.get(estudiante).actualizarValor(e); // O(log E) -> Edr llama al método definido en la interface del Handle (no sabe cómo se implementa el método dentro de la clase HandleHeap)
+    } // Complejidad Total: O(log E)
 
 
 //-----------------------------------------------------CORREGIR---------------------------------------------------------
 
 
     public NotaFinal[] corregir() {
-        NotaFinal[] notas = new NotaFinal[cantEstudiantes - cantSospechosos]; // O (E)
-        int pos = 0;
-        for (int i = 0; i < cantEstudiantes; i++) { // O (E)
-            Estudiante e = estudiantes.get(i);
-            if (!e.sospechoso && e.entrego) { //ver si en el requiere está que hayan entregado
-                notas[pos] = new NotaFinal(e.nota, e.id); // O (1)
-                pos++;
+        int n = cantEstudiantes - cantSospechosos;
+        NotaFinal[] notas = new NotaFinal[n]; // O(E) en el peor caso
+        int pos = n - 1;
+        // Le cargamos al array las notas de los estudiantes que hayan entregado y no sean sospechosos
+        while (puntajeMin.consultarMinimo() != null && pos >= 0) { // O(E)
+            Estudiante e = puntajeMin.sacarMinimo(); // O(log E)
+            if (!e.sospechoso) { // O(1)
+                notas[pos] = new NotaFinal(e.nota, e.id); // O(1)
+                pos--;
             }
         }
-
-        MergeSort.mergeSort(notas, pos); // O (E * log E)
-
         return notas;
-    } // Complejidad Total: O (E) + O (E * log E) = O (E * log E)
+    } // Complejidad Total: O(E) + O(E * log E) = O(E * log E)
 
 
 //-------------------------------------------------------CHEQUEAR COPIAS-------------------------------------------------
 
 
     public int[] chequearCopias() {
-        cantSospechosos = 0;
         int cantRespuestas = canonico.size();
 
-        int[][] examenUniversal = new int[cantRespuestas][10]; // O (10 * R) = O (R)
+        // Armamos una matriz que contiene la cantidad de veces que se puso la misma respuesta en cada ejercicio, recorriendo todos los estudiantes
+        int[][] examenUniversal = new int[cantRespuestas][10]; // O(10 * R) = O(R)
 
-        // Iteramos alumno por alumno y vamos completando la matriz con los ejercicios que fueron haciendo
-        for (int i = 0; i < cantEstudiantes; i++){ // O (E)
+        // Iteramos alumno por alumno y vamos completando la matriz con los ejercicios y respuestas que fueron realizando
+        for (int i = 0; i < cantEstudiantes; i++){ // O(E)
             Estudiante est = estudiantes.get(i);
-            for (int j = 0; j < cantRespuestas ; j++){ // O (R)
-                int res = est.respuestas.get(j);
+            for (int j = 0; j < cantRespuestas ; j++){ // O(R)
+                int res = est.respuestas.get(j); // O(1)
 
                 if(res != -1){
-                    examenUniversal[j][res]++;
+                    examenUniversal[j][res]++; // O(1)
                 }
             }
-        } // -> O (E * R)
+        } // Complejidad del for anidado: O(E * R)
 
-        ArrayList<Integer> sospechosos = new ArrayList<>(); // O (1)
+        ArrayList<Integer> sospechosos = new ArrayList<>(); // O(1)
 
         // Detectamos los sospechosos
-        for (int i = 0; i < cantEstudiantes; i++){ // O (E)
+        for (int i = 0; i < cantEstudiantes; i++){ // O(E)
             Estudiante est = estudiantes.get(i);
             if (cantEstudiantes > 1) {
                 int contador = 0;
 
-                for (int j = 0; j < cantRespuestas; j++){ // O (R)
-    
+                for (int j = 0; j < cantRespuestas; j++){ // O(R)
                     int res = est.respuestas.get(j);
-
                     if(res != -1){
-                        int respuestasAEjercicio = examenUniversal[j][res] - 1;
+                        int respuestasAEjercicio = examenUniversal[j][res] - 1; // O(1)
                         if(respuestasAEjercicio >= (0.25 * (cantEstudiantes - 1))){
-                            contador++;
+                            contador++; // O(1)
                         }
                     }
                 }
 
                 // Si es sospechosos lo agregamos
-                if(contador == est.resueltos && est.resueltos > 0){ // O (1)
+                if(contador == est.resueltos && est.resueltos > 0){ // O(1)
                     sospechosos.add(est.id);
                     cantSospechosos += 1;
                     est.sospechoso = true;
                 }
             }
-        }
+        } // Complejidad del for anidado: O(E * R)
 
-        int[] resultado = new int[sospechosos.size()]; // O (E) en el peor caso
-        for (int i = 0; i < sospechosos.size(); i++){
+        // Convertimos el array de sospechosos a uno de tamaño fijo
+        int[] resultado = new int[sospechosos.size()]; // O(E) en el peor caso
+        for (int i = 0; i < sospechosos.size(); i++){ // O(E)
             resultado[i] = sospechosos.get(i);
         }
         return resultado;
-    } // Complejidad total: O (R + E * R + E * R + E) = O (E * R)
+    } // Complejidad total: O(R) + O(E * R) + O(E * R) + O(E) + O(E) = O(E * R)
 }

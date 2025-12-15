@@ -2,6 +2,7 @@ package aed;
 
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,7 @@ class EdrTestsPropios {
         edr.resolver(4, 3, 3);
         edr.resolver(4, 9, 9);
 
+        
         // Alumno 5 intenta copiarse dos veces
         edr.copiarse(5); 
         edr.copiarse(5); 
@@ -123,9 +125,9 @@ class EdrTestsPropios {
         assertTrue(Arrays.equals(new int[]{0,1,2,3,4}, copiones));
 
         // Si todos son sospechosos -> corregir devuelve un array vacío
-        NotaFinal[] nf = edr.corregir();
+        NotaFinal[] nota_final = edr.corregir();
         NotaFinal[] esperado = new NotaFinal[]{};
-        assertTrue(Arrays.equals(esperado, nf));
+        assertTrue(Arrays.equals(esperado, nota_final));
     }
 
     @Test
@@ -147,16 +149,17 @@ class EdrTestsPropios {
         double[] notas_obtenidas = edr.notas();
         double[] notas_esperadas = new double[]{100.0};
         assertTrue(Arrays.equals(notas_esperadas, notas_obtenidas));
-
+        
         edr.entregar(0);
+       
 
         // El alumno no es sospechoso por caso borde a pesar de cumplir el requisito del 25%
         assertTrue(Arrays.equals(new int[]{}, edr.chequearCopias()));
 
         // El alumno no es sopechoso y tiene su nota
-        NotaFinal[] nf = edr.corregir();
+        NotaFinal[] nota_final = edr.corregir();
         NotaFinal[] esperado = new NotaFinal[]{new NotaFinal(100.0, 0)};
-        assertTrue(Arrays.equals(esperado, nf));
+        assertTrue(Arrays.equals(esperado, nota_final));
     }
     @Test
     void copia_adelante_borde_izquierdo(){
@@ -175,6 +178,20 @@ class EdrTestsPropios {
         double[] notas_esperadas = new double[]{10.0, 10.0};
         //ambos tienen el primer ejecicio correcto
         assertTrue(Arrays.equals(notas, notas_esperadas));
+
+        // ambos entregan
+        edr.entregar(0);
+        edr.entregar(1);
+
+        // los dos son sospechosos
+        int[] copiones = edr.chequearCopias();
+        int[] copiones_esperados = new int[]{0, 1};
+        assertTrue(Arrays.equals(copiones_esperados, copiones));
+
+        // corregir devuelve vacío
+        NotaFinal[] obtenido = edr.corregir();
+        NotaFinal[] esperado = new NotaFinal[]{};
+        assertTrue(Arrays.equals(esperado, obtenido));
     }
 
     @Test
@@ -192,9 +209,30 @@ class EdrTestsPropios {
         double[] notas = edr.notas();
         double[] notas_esperadas = new double[]{0.0, 10.0, 0.0, 10.0};
         assertTrue(Arrays.equals(notas, notas_esperadas));
+
+        // todos entregan
+        edr.entregar(0);
+        edr.entregar(1);
+        edr.entregar(2);
+        edr.entregar(3);
+
+        // los que resolvieron ejercicios (el 1 por buena fe, el 3 por copiarse) aparecen como sospechosos
+        int[] copiones = edr.chequearCopias();
+        int[] copiones_esperados = new int[]{1, 3};
+        assertTrue(Arrays.equals(copiones_esperados, copiones));
+
+        // corregir devuelve vacío
+        NotaFinal[] obtenido = edr.corregir();
+        NotaFinal[] esperado = new NotaFinal[]{
+            new NotaFinal(0.0, 2),
+            new NotaFinal(0.0, 0)
+        };
+        assertTrue(Arrays.equals(esperado, obtenido));
+        
     }
+
     @Test
-    void copiarse_de_la_dark_web_nunca_llega_a_buen_puerto() {
+    void todos_con_dark_web_con_examen_incorrecto() {
 
         d_aula = 4;
         cant_alumnos = 4;
@@ -220,5 +258,111 @@ class EdrTestsPropios {
         NotaFinal[] obtenido = edr.corregir();
         NotaFinal[] esperado = new NotaFinal[]{};
         assertTrue(Arrays.equals(esperado, obtenido));
+    }
+
+    @Test
+    void copiarse_mas_veces_de_lo_necesario(){    
+        d_aula = 2;
+        cant_alumnos = 2; 
+        solucion = new int[]{0};
+
+        edr = new Edr(d_aula, cant_alumnos, solucion);
+        // alumno 0 resuelve el ejercicio bien
+        edr.resolver(0, 0, 0);
+        // alumno 1 se copia una vez mas de lo necesario (no deberia pasar nada)
+        edr.copiarse(1);
+        edr.copiarse(1);
+
+        // ambos sacan 100
+        double[] notas = edr.notas();
+        double[] notas_esperadas = new double[]{100.0, 100.0};
+        assertTrue(Arrays.equals(notas, notas_esperadas));
+
+        // los dos son sospechosos
+        int[] copiones = edr.chequearCopias();
+        int[] copiones_esperados = new int[]{0, 1};
+        assertTrue(Arrays.equals(copiones_esperados, copiones));
+
+        // esperamos que corregir devuelva un array vacío
+        NotaFinal[] obtenido = edr.corregir();
+        NotaFinal[] esperado = new NotaFinal[]{};
+        assertTrue(Arrays.equals(esperado, obtenido));
+    }
+
+    @Test
+    void se_copia_sin_vecinos(){    
+        d_aula = 2;                                                     //  0  
+        cant_alumnos = 2;                                               //  1  
+        solucion = new int[]{0,1,2};                      //  -  
+
+        edr = new Edr(d_aula, cant_alumnos, solucion);
+        //alumno 1 resuelve todo bien
+        edr.resolver(1, 0, 0);
+        edr.resolver(1, 1, 1);
+        edr.resolver(1, 2, 2);
+        //alumno 0 se intenta copiar pero no tiene ningun vecino
+        edr.copiarse(0);
+
+        //alumno 0 no suma nota, pues no pudo copiarse
+        double[] notas = edr.notas();
+        double[] notas_esperadas = new double[]{0.0, 100.0};
+        assertTrue(Arrays.equals(notas, notas_esperadas));
+
+        // ambos entregan
+        edr.entregar(0);
+        edr.entregar(1);
+
+        //ninguno es sospechoso
+        int[] copiones = edr.chequearCopias();
+        int[] copiones_esperados = new int[]{};
+        assertTrue(Arrays.equals(copiones_esperados, copiones));
+
+        // todos reciben sus notas
+        NotaFinal[] obtenido = edr.corregir();
+        NotaFinal[] esperado = new NotaFinal[]{
+            new NotaFinal(100.0, 1),
+            new NotaFinal(0.0, 0)
+        };
+        assertTrue(Arrays.equals(esperado, obtenido));
+    }
+
+    @Test
+    void alumno_se_copia_de_alguien_que_accedio_a_la_dark_web() {
+        d_aula = 5;
+        cant_alumnos = 15;
+        solucion = new int[]{0,1,2,3,4,5,6,7,8,9};
+
+        edr = new Edr(d_aula, cant_alumnos, solucion);
+
+        // el estudiante 0 resuelve bien un ejercicio
+        edr.resolver(0, 0, 0);
+
+        // todos los estudiantes salvo el 0 toman el examen de la darkweb (el cual sólo tiene una respuesta bien)
+        int[] examenDark = new int[]{1,0,0,0,0,0,0,7,0,0};
+        edr.consultarDarkWeb(cant_alumnos - 1, examenDark);
+
+        // el estudiante 0 intenta copiarse (se copia un ejercicio mal resuelto)
+        edr.copiarse(0);
+
+        // verificamos las notas
+        double[] notas_obtenidas = edr.notas();
+        double[] notas_esperadas = new double[]{10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0};
+        assertTrue(Arrays.equals(notas_obtenidas, notas_esperadas));
+
+        // Todos entregan
+        for(int i = 0; i < cant_alumnos; i++){
+            edr.entregar(i);
+        }
+
+        // Todos los estudiantes que accedieron a la darkweb cumplen los requisitos de haberse copiado (aun teniendo casi todos los ejercicios mal)
+        // A pesar de haberse copiado, el estudiante 0 no comple los requisitos de sospechoso, puesto que en el ejercicio 0 puso una respuesta diferente al resto
+        int[] copiones = edr.chequearCopias();
+        int[] copiones_esperados = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14};
+        assertTrue(Arrays.equals(copiones_esperados, copiones));
+
+        // el estudiante 0 es el único que aparecerá en corregir
+        NotaFinal[] nota_final = edr.corregir();
+        NotaFinal[] esperado = new NotaFinal[]{new NotaFinal(10.0, 0)};
+        assertTrue(Arrays.equals(esperado, nota_final));
     }
 }

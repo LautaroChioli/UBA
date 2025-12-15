@@ -17,11 +17,9 @@ public class NotaFinal implements Comparable<NotaFinal> {
     }
 
     @Override
-    public String toString() {
-        return "(" + _nota + ", " + _id + ")"; ////////////// SACAR PARA ENTREGAR EL TOSTRING
-    }
-    @Override
     public boolean equals(Object otra) {
+        // Comparamos por contenido: dos NotaFinal son iguales si tienen misma nota y mismo id.
+        // Tuvimos que implementarlo porque en los tests se compara igualdad lógica y no referencia de objetos.
         boolean otraNoEsNull = otra != null;
         boolean esObjetoDeLaMismaClase = otraNoEsNull && (otra.getClass() == this.getClass());
         int otro_id = 0;
