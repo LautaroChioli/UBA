@@ -2,12 +2,12 @@
 #include <stdlib.h>
 
 typedef struct {
-    char nombre[16];
+    char nombre[32];
     int edad;
 } persona_t;
 
 persona_t* crearPersona(char *nombre, int edad){
-    persona_t *p = (persona_t*) malloc(20);
+    persona_t *p = (persona_t*) malloc(sizeof(persona_t));
     int cont = 0;
     while (nombre[cont] != '\0'){
         (*p).nombre[cont] = nombre[cont];
@@ -17,9 +17,14 @@ persona_t* crearPersona(char *nombre, int edad){
     return p;
 }
 
+void eliminarPersona(persona_t* p){
+    free(p);
+}
+
 int main(){
     persona_t *per1 = crearPersona("Crokus Younghand", 18);
 
     printf("Nombre: %s \n Edad: %d\n", (*per1).nombre, (*per1).edad);
-    free(per1);
+    eliminarPersona(per1);
+
 }

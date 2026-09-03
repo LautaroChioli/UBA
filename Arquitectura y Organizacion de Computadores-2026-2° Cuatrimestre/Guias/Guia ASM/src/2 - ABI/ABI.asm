@@ -98,19 +98,46 @@ alternate_sum_4_using_c_alternative:
 
 ; uint32_t alternate_sum_8(uint32_t x1, uint32_t x2, uint32_t x3, uint32_t x4, uint32_t x5, uint32_t x6, uint32_t x7, uint32_t x8);
 ; registros y pila: x1[?], x2[?], x3[?], x4[?], x5[?], x6[?], x7[?], x8[?]
+; parametros: 
+; x1 --> EDI
+; x2 --> ESI
+; x3 --> EDX
+; x4 --> ECX
+; x5 --> R8
+; x6 --> R9
 alternate_sum_8:
 	;prologo
+    push RBP
+    mov RBP, RSP
+  ; MAIN
 
-	; COMPLETAR
-
+  sub EDI, ESI
+  add EDI, EDX
+  sub EDI, ECX
+  add EDI, R8D
+  sub EDI, R9D
+  add EDI, dword[RBP + 16]
+  sub EDI, dword[RBP + 24]
+  mov EAX, EDI
 	;epilogo
+  mov RSP, RBP
+  POP RBP
 	ret
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; SUGERENCIA: investigar uso de instrucciones para convertir enteros a floats y viceversa
 ;void product_2_f(uint32_t * destination, uint32_t x1, float f1);
 ;registros: destination[?], x1[?], f1[?]
+
+;destination --> RDI !!!! RDI PORQUE ES PUNTERO SIEMPRE ES 64 BITS !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;x1 --> ESI
+;f1 8==D XMM0
 product_2_f:
+  cvtsi2ss XMM1, ESI ;int 32 a float en xmm1
+  mulss XMM0, XMM1 ; mulss es para mult en floating point
+  cvttss2si EAX, XMM0 ; float a in 32
+  mov dword [rdi], eax ; en rdi hay un puntero, se puede desreferenciar en x86 con corchetes acordate 
 	ret
 
 
@@ -125,15 +152,51 @@ product_9_f:
 	;prologo
 	push rbp
 	mov rbp, rsp
-
+  ; x6 rsp + 16
+  ; x7 rsp + 24
+  ; x8 rso + 32
+  ; x9 rsp + 40
+  ; f9 rsp + 48
 	;convertimos los flotantes de cada registro xmm en doubles
-	; COMPLETAR
+	cvtss2sd xmm0, xmm0 ;cvtss2sd convierte en mismo reg, o haciendo xmm0, xmm1, guarda el original, 1, y sobreecribe xmm0
+	cvtss2sd xmm1, xmm1
+	cvtss2sd xmm2, xmm2
+	cvtss2sd xmm3, xmm3
+	cvtss2sd xmm4, xmm4
+	cvtss2sd xmm5, xmm5
+	cvtss2sd xmm6, xmm6
+	cvtss2sd xmm7, xmm7
 
 	;multiplicamos los doubles en xmm0 <- xmm0 * xmm1, xmmo * xmm2 , ...
-	; COMPLETAR
-
-	; convertimos los enteros en doubles y los multiplicamos por xmm0.
-	; COMPLETAR
+	mulsd xmm0, xmm1
+  mulsd xmm0, xmm2
+  mulsd xmm0, xmm3
+  mulsd xmm0, xmm4
+  mulsd xmm0, xmm5
+  mulsd xmm0, xmm6
+  mulsd xmm0, xmm7
+  cvtss2sd xmm1, dword [rbp + 48]
+  mulsd xmm0, xmm1
+; convertimos los enteros en doubles y los multiplicamos por xmm0.
+	cvtsi2sd xmm1, ESI
+  cvtsi2sd xmm2, EDX
+  cvtsi2sd xmm3, ECX
+  cvtsi2sd xmm4, R8D
+  cvtsi2sd xmm5, R9D
+  mulsd xmm0, xmm1
+  mulsd xmm0, xmm2
+  mulsd xmm0, xmm3
+  mulsd xmm0, xmm4
+  mulsd xmm0, xmm5
+  cvtsi2sd xmm1, dword[rbp + 16]
+  cvtsi2sd xmm2, dword[rbp + 24]
+  cvtsi2sd xmm3, dword[rbp + 32]
+  cvtsi2sd xmm4, dword[rbp + 40]
+  mulsd xmm0, xmm1
+  mulsd xmm0, xmm2
+  mulsd xmm0, xmm3
+  mulsd xmm0, xmm4
+  movsd qword[rdi], xmm0
 
 	; epilogo
 	pop rbp
