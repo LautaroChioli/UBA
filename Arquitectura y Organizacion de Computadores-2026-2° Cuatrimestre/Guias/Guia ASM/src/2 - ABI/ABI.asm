@@ -23,9 +23,9 @@ global product_9_f
 ; x3 --> EDX
 ; x4 --> ECX
 alternate_sum_4:
-  sub EDI, ESI
-  add EDI, EDX
-  sub EDI, ECX
+  add EDI, ESI
+  sub EDI, EDX
+  add EDI, ECX
 
   mov EAX, EDI
   ret

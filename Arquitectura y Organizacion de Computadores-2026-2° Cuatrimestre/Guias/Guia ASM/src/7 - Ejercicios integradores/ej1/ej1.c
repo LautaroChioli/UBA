@@ -18,12 +18,24 @@ bool EJERCICIO_1A_HECHO = false;
  * Funciones a implementar:
  *   - indice_a_inventario
  */
-bool EJERCICIO_1B_HECHO = false;
+bool EJERCICIO_1B_HECHO = true;
 
 /**
  * OPCIONAL: implementar en C
  */
 bool es_indice_ordenado(item_t** inventario, uint16_t* indice, uint16_t tamanio, comparador_t comparador) {
+	for (int i = 0; i < tamanio - 1; i++){
+
+		item_t *item_actual = inventario[indice[i]];
+		item_t *item_siguiente = inventario[indice[i+1]];
+
+		if (comparador(item_actual, item_siguiente) == false){
+			return false;
+		}
+
+	
+	}
+
 	return true;
 }
 
@@ -31,7 +43,12 @@ bool es_indice_ordenado(item_t** inventario, uint16_t* indice, uint16_t tamanio,
  * OPCIONAL: implementar en C
  */
 item_t** indice_a_inventario(item_t** inventario, uint16_t* indice, uint16_t tamanio) {
-	// ¿Cuánta memoria hay que pedir para el resultado?
-	item_t** resultado;
-	return resultado;
+	item_t** nuevo_inventario = malloc(sizeof(item_t*) * tamanio);
+
+	for (int i = 0; i < tamanio; i++){
+		uint16_t ind = indice[i];
+		nuevo_inventario[i] = inventario[ind];
+	}
+	
+	return nuevo_inventario;
 }

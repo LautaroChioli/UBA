@@ -1,3 +1,53 @@
+
+comandos gdb:
+
+x = examine, si tengo addres en registro, veo lo de adentro.
+
+print/u = printea como decimal no signado.
+print/s = como string
+
+
+1. Parámetros de Entrada (Inputs)
+
+Cuando llamas a una función en C (o desde ensamblador), los primeros 6 argumentos (enteros o punteros) se pasan estrictamente en este orden. Todos estos son volátiles (se destruyen al llamar a otra función).
+
+    rdi: Primer argumento.
+    rsi: Segundo argumento.
+    rdx: Tercer argumento.
+    rcx: Cuarto argumento.  contador, i en un loop
+    r8: Quinto argumento.
+    r9: Sexto argumento.
+    ¿Qué pasa si una función tiene 7 o más argumentos?
+    A partir del séptimo, se empujan a la pila (stack) antes de hacer el call.
+
+2. Valores de Retorno (Outputs)
+
+    rax: Es el rey de los retornos. Aquí se devuelve el resultado principal (un número, un puntero, NULL, etc.). También es volátil.
+    rdx: Se usa junto con rax solo si la función necesita devolver un valor gigante (de 128 bits). En el 99% de los casos, solo mirarás rax.
+
+3. Las "Cajas Fuertes" (No Volátiles / Callee-Saved)
+
+Si tu función necesita usar estos registros, estás obligado a hacerles un push al principio y un pop al final para devolvérselos intactos a quien te llamó. Si llamas a otra función, te garantizan que no te los van a tocar.
+    rbx: Propósito general (como el que usaste para guardar tu puntero original).
+    rbp: Puntero base (Base Pointer). Tradicionalmente usado como ancla para las variables locales de la pila.
+    r12, r13, r14, r15: Registros extra de propósito general. ¡Úsalos libremente siempre que los guardes y restaures!
+    
+4. Los "Borradores" Extra (Volátiles / Caller-Saved)
+
+Si necesitas hacer cálculos, bucles o guardar cosas temporales, y ya te quedaste sin espacio, puedes usar estos. Pero ojo: si haces un call, perderás lo que haya dentro.
+    r10: Borrador general. A veces se usa en llamadas al sistema (syscalls) en lugar de rcx.
+    r11: Borrador general.
+
+5. Registros Especiales Intocables
+
+Estos manejan cómo corre el programa físicamente en la memoria. No los uses para guardar datos normales.
+    rsp (Stack Pointer): Apunta siempre a la cima de la pila. Sube y baja automáticamente cuando haces push, pop, call o ret. Si lo modificas manualmente (ej. sub rsp, 16), asegúrate de deshacerlo antes del ret.
+    rip (Instruction Pointer): Apunta a la siguiente línea de código que la CPU va a ejecutar. No puedes modificarlo directamente con mov, solo cambia haciendo saltos (jmp, call, ret, je, etc.).
+
+
+
+
+
 # Guía de uso del ABI enforcer
 
 Para los ejercicos de esta guía, que pueden encontrar en las subcarpetas dentro de `./src`, además de tests funcionales les proveemos una herramienta de validación de cumplimiento de ABI que se utilizará para evaluar sus entregas en las instancias de evaluación.

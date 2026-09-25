@@ -74,7 +74,7 @@ Hay muchísimos criterios de orden posibles por lo que además definimos un tipo
 de dato para poder hablar de ellos:
 ```c
 typedef bool (*comparador_t)(item_t*, item_t*);
-``` 
+```
 
 ## 1A - Detectar índices ordenados
 
@@ -86,6 +86,7 @@ ordenar la lista usando X" en lugar de tener que escribir todo el índice.
 Para realizar esto se solicita implementar en ensamblador una función que
 verifique si una vista del inventario está correctamente ordenada de acuerdo a
 un criterio. La firma de la función a implementar es la siguiente:
+
 ```c
 bool es_indice_ordenado(item_t** inventario, uint16_t* indice, uint16_t tamanio, comparador_t comparador);
 ```
@@ -127,7 +128,7 @@ utilizando `free(ptr)`.
 La función debe tener la siguiente firma:
 ```c
 item_t** indice_a_inventario(item_t** inventario, uint16_t* indice, uint16_t tamanio);
-``` 
+```
 
 Donde:
 - `inventario` un array de punteros a ítems que representa el inventario a

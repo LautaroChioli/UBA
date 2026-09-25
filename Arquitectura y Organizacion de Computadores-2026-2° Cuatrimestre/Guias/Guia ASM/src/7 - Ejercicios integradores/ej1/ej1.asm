@@ -14,21 +14,20 @@ TRUE  EQU 1
 ; Funciones a implementar:
 ;   - es_indice_ordenado
 global EJERCICIO_1A_HECHO
-EJERCICIO_1A_HECHO: db FALSE ; Cambiar por `TRUE` para correr los tests.
+EJERCICIO_1A_HECHO: db TRUE; Cambiar por `TRUE` para correr los tests.
 
 ; Marca el ejercicio 1B como hecho (`true`) o pendiente (`false`).
 ;
 ; Funciones a implementar:
 ;   - indice_a_inventario
 global EJERCICIO_1B_HECHO
-EJERCICIO_1B_HECHO: db FALSE ; Cambiar por `TRUE` para correr los tests.
+EJERCICIO_1B_HECHO: db TRUE; Cambiar por `TRUE` para correr los tests.
 
 ;########### ESTOS SON LOS OFFSETS Y TAMAÑO DE LOS STRUCTS
 ; Completar las definiciones (serán revisadas por ABI enforcer):
-ITEM_NOMBRE EQU ??
-ITEM_FUERZA EQU ??
-ITEM_DURABILIDAD EQU ??
-ITEM_SIZE EQU ??
+ITEM_NOMBRE_OFFSET EQU 0
+ITEM_FUERZA_OFFSET EQU 20
+ITEM_DURABILIDAD_OFFSET EQU 24
 
 ;; La funcion debe verificar si una vista del inventario está correctamente 
 ;; ordenada de acuerdo a un criterio (comparador)
@@ -53,6 +52,8 @@ ITEM_SIZE EQU ??
 ;; - Importa que los ítems estén ordenados según el comparador. No hay necesidad
 ;;   de verificar que el orden sea estable.
 
+
+INDICE_OFFSET EQU 2
 global es_indice_ordenado
 es_indice_ordenado:
 	; Te recomendamos llenar una tablita acá con cada parámetro y su
@@ -63,7 +64,69 @@ es_indice_ordenado:
 	; r/m64 = uint16_t*    indice
 	; r/m16 = uint16_t     tamanio
 	; r/m64 = comparador_t comparador
-		ret
+	PUSH rbp
+	mov rbp, rsp
+	PUSH r12
+	PUSH r13
+	PUSH r14
+	PUSH r15
+	PUSH rbx
+	SUB rsp, 8
+
+	MOV r12, rdi
+	MOV r13, rsi
+	MOVZX r14, dx
+	MOV r15, rcx
+	XOR rbx, rbx
+	SUB r14, 1
+
+	.loop:
+	XOR r8, r8
+	XOR r9, r9
+	MOV r8w, [r13 + rbx * INDICE_OFFSET]
+	MOV r9w, [r13 + rbx * INDICE_OFFSET + 2]
+	MOV rdi, [r12+r8*8]
+	MOV rsi, [r12+r9*8]
+
+	call r15
+
+	CMP al, 0
+	JE .noIgual
+
+	INC rbx
+	CMP rbx, r14
+	JE .fin
+	JMP .loop
+
+	.fin:
+	MOV rax, 1
+	ADD rsp, 8
+	POP rbx
+	POP r15
+	POP r14
+	POP r13
+	POP r12
+	POP rbp
+	ret 
+
+	.noIgual:
+	MOV rax, 0
+	ADD rsp, 8
+	POP rbx
+	POP r15
+	POP r14
+	POP r13
+	POP r12
+	POP rbp
+	ret
+
+
+
+
+
+
+
+
 
 ;; Dado un inventario y una vista, crear un nuevo inventario que mantenga el
 ;; orden descrito por la misma.
@@ -84,7 +147,7 @@ es_indice_ordenado:
 ;; - Tanto los elementos de `inventario` como los del resultado son punteros a
 ;;   `ítems`. Se pide *copiar* estos punteros, **no se deben crear ni clonar
 ;;   ítems**
-
+PUNTERO_OFFSET EQU 8
 global indice_a_inventario
 indice_a_inventario:
 	; Te recomendamos llenar una tablita acá con cada parámetro y su
@@ -94,4 +157,43 @@ indice_a_inventario:
 	; r/m64 = item_t**  inventario
 	; r/m64 = uint16_t* indice
 	; r/m16 = uint16_t  tamanio
+	;
+	;ITEM_t SIZE OF = 18 ( 2) + 4+ 2 (2) = 28
+	PUSH rbp
+	MOV rbp, rsp
+	PUSH r12
+	PUSH r13
+	PUSH r14
+	PUSH rbx
+
+	MOV r12, rdi
+	MOV r13, rsi
+	MOVZX r14, edx
+
+	MOV rdi, 8
+	IMUL rdi, r14
+
+	CALL malloc
+
+	XOR rcx, rcx
+	MOV rbx, rax
+
+	.loop:
+
+	MOVZX r8, word  [r13 + rcx*INDICE_OFFSET]
+	MOV r9, [r12 + r8*PUNTERO_OFFSET]
+	MOV [rbx + rcx*PUNTERO_OFFSET], r9
+
+	INC rcx
+	CMP rcx, r14
+	JE .fin
+	JMP .loop
+
+
+	.fin:
+	POP rbx
+	POP r14
+	POP r13
+	POP r12
+	POP rbp
 	ret
