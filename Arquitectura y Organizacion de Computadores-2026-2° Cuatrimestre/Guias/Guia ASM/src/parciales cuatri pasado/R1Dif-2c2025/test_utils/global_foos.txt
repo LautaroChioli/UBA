@@ -1,0 +1,4 @@
+global_foo_label malloc
+global_foo_label free
+global_foo_label calloc
+global_foo_label prepareBackpack
