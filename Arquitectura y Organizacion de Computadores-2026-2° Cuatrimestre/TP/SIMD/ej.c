@@ -6,7 +6,7 @@ global ej_1_hecho
 global ej_2_hecho
 global ej_3_hecho
 global ej_4_hecho
-ej_1_hecho: db FALSE
+ej_1_hecho: db TRUE
 ej_2_hecho: db FALSE
 ej_3_hecho: db FALSE
 ej_4_hecho: db FALSE

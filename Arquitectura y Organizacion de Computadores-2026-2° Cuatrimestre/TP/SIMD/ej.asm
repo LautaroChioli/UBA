@@ -13,6 +13,15 @@ SINCOS_SZ      EQU 8
 
 section .rodata
 
+global ej_1_hecho
+global ej_2_hecho
+global ej_3_hecho
+global ej_4_hecho
+ej_1_hecho: db TRUE
+ej_2_hecho: db TRUE
+ej_3_hecho: db TRUE
+ej_4_hecho: db TRUE
+
 
 ALIGN 16
 espacios:
@@ -147,8 +156,8 @@ ej2_detect:
 	sqrtss xmm0, xmm4 	; xmm0 = sqrt(re^2 + im^2)
 	addss  xmm0, xmm0	; * 2
 	cvtsi2ss xmm1, rdi  ; paso a float para poder hacer la division
-	divss  xmm0, xmm1	; / size
-	ret
+	divss  xmm0, xmm1	; / size, todo esto calcula la amplitud de la onda 
+	ret                    
 
 global ej3_remove_duplicates
 ; void ej3_remove_duplicates(size_t size, char detected[size], char output[]);
